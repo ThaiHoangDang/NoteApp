@@ -13,5 +13,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'notes.multi.console.Console.kt'
+    mainClass = 'notes.multi.console.ConsoleKt'
 }
