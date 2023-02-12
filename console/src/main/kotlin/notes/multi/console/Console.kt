@@ -9,5 +9,5 @@ fun main() {
     // thesea re test functions feel free to use
     val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
     f.writefile("hello world")
-    println(f.openfile())
+   println(f.openfile())
 }
