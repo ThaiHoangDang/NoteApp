@@ -28,7 +28,7 @@ class Filemanager(private val dir: String, private val name: String) {
 
     // opens and read the existing file
     fun openfile(): String {
-        if (listfiles.contains(filepath)) {
+        if (!listfiles.contains(filepath)) {
             return ""
         }
         val inputStream: InputStream = filepath.inputStream()
