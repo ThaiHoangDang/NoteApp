@@ -24,6 +24,7 @@ class Filemanager(private val dir: String, private val name: String) {
     // create and write to that file
     fun writefile(line:String) {
         filepath.writeText(line)
+        listfiles.add(filepath)
     }
 
     // opens and read the existing file
@@ -37,6 +38,7 @@ class Filemanager(private val dir: String, private val name: String) {
     }
 
     fun deletefile():Boolean {
+        listfiles.remove(filepath)
         return filepath.delete()
     }
 
