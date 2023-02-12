@@ -10,4 +10,5 @@ fun main() {
     val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
     f.writefile("hello world")
    println(f.openfile())
+    f.deletefile()
 }
