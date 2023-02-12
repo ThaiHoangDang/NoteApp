@@ -3,10 +3,11 @@
  */
 package notes.multi.console
 
-import notes.multi.utilities.StringUtils
-
-import org.apache.commons.text.WordUtils
+import notes.multi.utilities.Filemanager
 
 fun main() {
-    println("this is multi setup")
+    // thesea re test functions feel free to use
+    val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
+    f.writefile("hello world")
+    println(f.openfile())
 }
