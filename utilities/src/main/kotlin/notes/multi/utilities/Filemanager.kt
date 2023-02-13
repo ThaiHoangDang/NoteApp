@@ -1,29 +1,45 @@
 package notes.multi.utilities
 
 import java.io.File
-import java.io.FileInputStream
-import java.util.*
-import kotlin.io.path.exists
-class Filemanager(val dir: String) {
-    private val directory = File(dir)
+import java.io.InputStream
 
-    fun files() : MutableList<File> {
-        val retfiles = mutableListOf<File>()
+class Filemanager(private val dir: String, private val name: String) {
+    private val directory = File(dir)
+    private val filepath = File("$dir/$name")
+    private val listfiles = mutableListOf<File>()
+    init {
         for (f in directory.listFiles()!!) {
             if (f.extension == "txt" || f.extension == "md") {
-                retfiles.add(f)
+                listfiles.add(f)
             }
         }
-        return retfiles
+    }
+
+    //returns list of files
+    fun files() : MutableList<File> {
+        return listfiles
     }
 
 
-    fun createfile() {
-        //TODO: Create File
+    // create and write to that file
+    fun writefile(line:String) {
+        filepath.writeText(line)
+        listfiles.add(filepath)
     }
 
-    fun deletefile(path:String) {
-        //TODO: DELETE FILE
+    // opens and read the existing file
+    fun openfile(): String {
+        if (!listfiles.contains(filepath)) {
+            return ""
+        }
+        val inputStream: InputStream = filepath.inputStream()
+
+        return inputStream.bufferedReader().use { it.readText() }
+    }
+
+    fun deletefile():Boolean {
+        listfiles.remove(filepath)
+        return filepath.delete()
     }
 
 }

@@ -38,13 +38,13 @@ fun main(args: Array<String>) {
     } else {
         if (args.size < 2) {
             val filename = args[0]
-           // Optional Regex Check for a specific argument format:
-              MessageUtils.verifyFilename(filename, Regex("^.*[.](md|txt)$"))
-           // if (fileExists) {
-           //     Filemanager(".").editfile()
-           // } else {
-           //     Filemanager(".").createfile()
-           // }
+            // Optional Regex Check for a specific argument format:
+            MessageUtils.verifyFilename(filename, Regex("^.*[.](md|txt)$"))
+            // if (fileExists) {
+            //     Filemanager(".").editfile()
+            // } else {
+            //     Filemanager(".").createfile()
+            // }
         } else {
             if (args[0] != "-d") {
                 throw IllegalArgumentException("[ERROR]: First parameter must be the delete flag")
@@ -61,5 +61,4 @@ fun main(args: Array<String>) {
             }
         }
     }
-
 }
