@@ -8,4 +8,9 @@ plugins {
 
 dependencies {
     api project(':list')
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+}
+
+test {
+    useJUnitPlatform()
 }
