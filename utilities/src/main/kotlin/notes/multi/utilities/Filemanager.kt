@@ -41,9 +41,6 @@ class Filemanager(private val dir: String, private val name: String) {
 
     fun deletefile():Boolean {
         listfiles.remove(filepath)
-        for (i in listfiles) {
-            println("Not Deleted!")
-        }
         return filepath.delete()
     }
 
