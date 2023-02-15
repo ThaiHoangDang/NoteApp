@@ -9,9 +9,14 @@ plugins {
 dependencies {
     implementation 'org.apache.commons:commons-text'
     implementation project(':utilities')
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 application {
     // Define the main class for the application.
     mainClass = 'notes.multi.console.ConsoleKt'
+}
+
+test {
+    useJUnitPlatform()
 }
