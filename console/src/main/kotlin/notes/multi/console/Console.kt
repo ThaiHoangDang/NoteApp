@@ -7,10 +7,14 @@ import notes.multi.app.MessageUtils
 import notes.multi.utilities.Filemanager
 import java.lang.IllegalArgumentException
 
-fun main(args: Array<String>) {
+import notes.multi.utilities.Note
+import notes.multi.utilities.TextWindow
+import javafx.application.Application
 
-    if(args.isEmpty()) {
-        println("""
+fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        println(
+            """
         +-------------------------------------------------------------------------------------+
         WELCOME TO TEAM 112'S CONSOLE BASED NOTES APP
          
@@ -34,7 +38,8 @@ fun main(args: Array<String>) {
             - If the user tries to delete a note that doesn't exist,
               the app will display an error message
         +-------------------------------------------------------------------------------------+
-    """.trimIndent())
+    """.trimIndent()
+        )
     } else {
         if (args.size < 2) {
             val filename = args[0]
@@ -62,3 +67,17 @@ fun main(args: Array<String>) {
         }
     }
 }
+
+// fun main() {
+//     // thesea re test functions feel free to use
+//     val n = Note()
+//     val noteTitle = n.title
+//     val noteContent = n.text.toString()
+//     println(noteContent)
+//     Application.launch(TextWindow()::class.java, "--title=${noteTitle}", "--text=${noteContent}")
+//
+//     // val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
+//     // f.writefile("hello world")
+//     // f.deletefile()
+//     // println(f.openfile())
+// }
