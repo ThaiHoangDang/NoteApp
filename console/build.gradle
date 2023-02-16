@@ -4,6 +4,14 @@
 
 plugins {
     id 'notes.multi.kotlin-application-conventions'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+}
+
+javafx {
+    version = '18.0.2'
+    modules = ['javafx.controls', 'javafx.graphics']
 }
 
 dependencies {
