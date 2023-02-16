@@ -5,10 +5,20 @@ package notes.multi.console
 
 import notes.multi.utilities.Filemanager
 
+import notes.multi.utilities.Note
+import notes.multi.utilities.TextWindow
+import javafx.application.Application
+
 fun main() {
     // thesea re test functions feel free to use
-    val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
-    f.writefile("hello world")
-    f.deletefile()
-    println(f.openfile())
+    val n = Note()
+    val noteTitle = n.title
+    val noteContent = n.text.toString()
+    println(noteContent)
+    Application.launch(TextWindow()::class.java, "--title=${noteTitle}", "--text=${noteContent}")
+
+    // val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
+    // f.writefile("hello world")
+    // f.deletefile()
+    // println(f.openfile())
 }
