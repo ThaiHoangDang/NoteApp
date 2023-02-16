@@ -6,7 +6,9 @@ import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
+import javafx.scene.layout.AnchorPane
 import javafx.application.Application.Parameters
+import javafx.scene.layout.Priority
 
 class TextWindow(): Application() {
     var paramsMap = mutableMapOf<String, String>()
@@ -22,6 +24,12 @@ class TextWindow(): Application() {
         textarea.setText(paramsMap["text"])
         textarea.setWrapText(true)
         val scroll = ScrollPane()
+        val anchor = AnchorPane(textarea)
+
+        AnchorPane.setTopAnchor(textarea, 0.0)
+        AnchorPane.setBottomAnchor(textarea, 0.0)
+        AnchorPane.setLeftAnchor(textarea, 0.0)
+        AnchorPane.setRightAnchor(textarea, 0.0)
 
         scroll.setFitToHeight(true)
         scroll.setHmin(300.0)
@@ -33,8 +41,10 @@ class TextWindow(): Application() {
         // println(scroll.isFitToWidth)
 
         scroll.content = textarea
+        val box = VBox(anchor)
+        VBox.setVgrow(anchor, Priority.ALWAYS)
 
-        stage.scene = Scene(VBox(scroll), 300.0, 300.0)
+        stage.scene = Scene(box, 300.0, 300.0)
         stage.show()
     }
 }
