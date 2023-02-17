@@ -16,7 +16,6 @@ class MessageUtils {
          */
         fun verifyFilename(filename: String, pattern: Regex) {
             if (!(pattern matches filename)) {
-                System.err.println("[ERROR]: File name does not follow the required input pattern")
                 throw IllegalArgumentException("[ERROR]: File name does not follow the required input pattern")
             }
         }
