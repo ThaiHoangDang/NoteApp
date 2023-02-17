@@ -9,7 +9,7 @@ class Filemanager(private val dir: String, val name: String) {
     private val listfiles = mutableListOf<File>()
     init {
         for (f in directory.listFiles()!!) {
-            if (f.extension == "txt" || f.extension == "md") {
+            if (f.extension.lowercase() == "txt" || f.extension.lowercase() == "md") {
                 listfiles.add(f)
             }
         }
