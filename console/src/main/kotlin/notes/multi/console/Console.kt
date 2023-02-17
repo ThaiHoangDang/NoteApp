@@ -8,14 +8,14 @@ import notes.multi.utilities.Filemanager
 import notes.multi.utilities.Note
 import notes.multi.utilities.TextWindow
 import javafx.application.Application
+import javafx.stage.Stage
 
 fun main() {
     // thesea re test functions feel free to use
     val n = Note()
-    val noteTitle = n.title
-    val noteContent = n.text.toString()
-    println(noteContent)
-    Application.launch(TextWindow()::class.java, "--title=${noteTitle}", "--text=${noteContent}")
+    val noteTitle = "testver2.txt"
+    val path = "${System.getProperty("user.dir")}/test/"
+    Application.launch(TextWindow()::class.java, "--title=${noteTitle}", "--text=${path}")
 
     // val f = Filemanager("${System.getProperty("user.dir")}/test/", "hello.txt")
     // f.writefile("hello world")

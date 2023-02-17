@@ -3,7 +3,7 @@ package notes.multi.utilities
 import java.io.File
 import java.io.InputStream
 
-class Filemanager(private val dir: String, private val name: String) {
+class Filemanager(private val dir: String, val name: String) {
     private val directory = File(dir)
     private val filepath = File("$dir/$name")
     private val listfiles = mutableListOf<File>()
@@ -41,9 +41,6 @@ class Filemanager(private val dir: String, private val name: String) {
 
     fun deletefile():Boolean {
         listfiles.remove(filepath)
-        for (i in listfiles) {
-            println("Not Deleted!")
-        }
         return filepath.delete()
     }
 
