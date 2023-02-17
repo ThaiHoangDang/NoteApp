@@ -12,10 +12,7 @@ import notes.multi.utilities.Folder
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class MessageUtilsTest {
-    @Test fun testGetMessage() {
-        assertEquals("Hello      World!", MessageUtils.getMessage())
-    }
+class ConsoleUtilsTest {
     @Test fun checkModelClasses() {
         var n = Note(
             title = "NeverGonnaGiveYouUp",
@@ -36,6 +33,6 @@ class MessageUtilsTest {
             notes = mutableListOf<Note>(n)
         )
 
-        assertEquals(fldr.notes?.get(0) ?: null, n)
+        assertEquals(fldr.notes?.get(0), n)
     }
 }
