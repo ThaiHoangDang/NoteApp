@@ -10,10 +10,15 @@ import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Application.Parameters
 import javafx.application.Platform
+import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseDragEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
+import javafx.scene.web.HTMLEditor
+import java.beans.EventHandler
 
 class TextWindow(): Application() {
     var paramsMap = mutableMapOf<String, String>()
@@ -30,10 +35,13 @@ class TextWindow(): Application() {
         val path = paramsMap["text"]!!
         val filecontroller = Filemanager(path, paramsMap["title"]!!)
         stage.setTitle(paramsMap["title"])
-        val textarea = TextArea()
+        val textarea = HTMLEditor()
         //textarea.setText(paramsMap["text"])
-        textarea.setText(filecontroller.openfile())
-        textarea.setWrapText(true)
+        textarea.htmlText = filecontroller.openfile()
+
+        //textarea.setWrapText(true)
+
+
         val scroll = ScrollPane()
         val anchor = AnchorPane(textarea)
 
@@ -68,7 +76,7 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> filecontroller.writefile(textarea.getText())
+                        ButtonType.OK -> filecontroller.writefile(textarea.htmlText)
                     }
                 }
             } else if (event.code == KeyCode.D && controlpressed) {
@@ -100,6 +108,7 @@ class TextWindow(): Application() {
         stage.scene.setOnKeyReleased { event->
             if (controlpressed) {controlpressed = false}
         }
+
 
         stage.show()
     }
