@@ -7,6 +7,9 @@ import java.lang.IllegalArgumentException
 
 import notes.multi.utilities.TextWindow
 import javafx.application.Application
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.io.path.Path
 import java.io.File
 
@@ -37,76 +40,101 @@ fun query() {
 }
 
 
+// fun main(args: Array<String>) {
+//     {
+//     // try {
+//     //     if (args.isEmpty()) {
+//     //         println(
+//     //             """
+//     //     +-------------------------------------------------------------------------------------+
+//     //     WELCOME TO TEAM 112'S CONSOLE BASED NOTES APP
+//     //
+//     //     This application is a working console-based prototype for the
+//     //     note taking application that the team will be delivering at the end of the term.
+//     //
+//     //     With this simple app, users can:
+//     //         1. Create Notes
+//     //         2. Edit Notes
+//     //         3. Delete Notes
+//     //         4. Close GUI Window
+//     //
+//     //      1. Create Notes
+//     //         - To create notes, users must type "./console <filename>"
+//     //         - To save changes, use the Ctrl + S keybinding
+//     //
+//     //      2. Edit Notes
+//     //         - To edit notes, users must type "./console <filename>"
+//     //         - If the file doesn't exist, a new note will be created
+//     //         - To save changes, use the Ctrl + S keybinding
+//     //
+//     //      3. Delete Notes
+//     //         - To delete a note, use the Ctrl + D keybinding
+//     //
+//     //      4. Close GUI Window
+//     //         - To close the GUI window, use the Ctrl + W keybinding
+//     //
+//     //     +-------------------------------------------------------------------------------------+
+//     // """.trimIndent()
+//     //         )
+//     //     } else {
+//     //         if (args.size < 2) {
+//     //
+//     //             /**
+//     //              * File Path (can be relative or absolute)
+//     //              */
+//     //             val filePathArg = args[0]
+//     //
+//     //             /**
+//     //              * Title of the file
+//     //              */
+//     //             val fileTitle = Path(filePathArg).fileName
+//     //
+//     //             /**
+//     //              * Location of the file as text
+//     //              */
+//     //             val fileLocation = Path(filePathArg).parent ?: System.getProperty("user.dir")
+//     //             if (!File(fileLocation.toString()).isDirectory) throw IllegalArgumentException("[ERROR]: Directory does not exist!")
+//     //
+//     //             // Regex Check for a specific argument format:
+//     //             ConsoleUtils.verifyFilename(fileTitle.toString(), Regex("^.*[.]([Mm][Dd]|[Tt][Xx][Tt])$"))
+//     //
+//     //             // Passing the location and title as params to TextWindow
+//     //             Application.launch(TextWindow()::class.java, "--title=${fileTitle}", "--location=${fileLocation}")
+//     //
+//     //         } else {
+//     //             throw IllegalArgumentException("[ERROR]: Wrong number of arguments provided!")
+//     //         }
+//     //     }
+//     // } catch (err: IllegalArgumentException) {
+//     //     System.err.println(err.message)
+//     // }
+//     }
+//     connect()
+//     query()
+// }
+
+object Cities: IntIdTable() {
+    val name = varchar("name", 50)
+}
+
 fun main(args: Array<String>) {
-    {
-    // try {
-    //     if (args.isEmpty()) {
-    //         println(
-    //             """
-    //     +-------------------------------------------------------------------------------------+
-    //     WELCOME TO TEAM 112'S CONSOLE BASED NOTES APP
-    //
-    //     This application is a working console-based prototype for the
-    //     note taking application that the team will be delivering at the end of the term.
-    //
-    //     With this simple app, users can:
-    //         1. Create Notes
-    //         2. Edit Notes
-    //         3. Delete Notes
-    //         4. Close GUI Window
-    //
-    //      1. Create Notes
-    //         - To create notes, users must type "./console <filename>"
-    //         - To save changes, use the Ctrl + S keybinding
-    //
-    //      2. Edit Notes
-    //         - To edit notes, users must type "./console <filename>"
-    //         - If the file doesn't exist, a new note will be created
-    //         - To save changes, use the Ctrl + S keybinding
-    //
-    //      3. Delete Notes
-    //         - To delete a note, use the Ctrl + D keybinding
-    //
-    //      4. Close GUI Window
-    //         - To close the GUI window, use the Ctrl + W keybinding
-    //
-    //     +-------------------------------------------------------------------------------------+
-    // """.trimIndent()
-    //         )
-    //     } else {
-    //         if (args.size < 2) {
-    //
-    //             /**
-    //              * File Path (can be relative or absolute)
-    //              */
-    //             val filePathArg = args[0]
-    //
-    //             /**
-    //              * Title of the file
-    //              */
-    //             val fileTitle = Path(filePathArg).fileName
-    //
-    //             /**
-    //              * Location of the file as text
-    //              */
-    //             val fileLocation = Path(filePathArg).parent ?: System.getProperty("user.dir")
-    //             if (!File(fileLocation.toString()).isDirectory) throw IllegalArgumentException("[ERROR]: Directory does not exist!")
-    //
-    //             // Regex Check for a specific argument format:
-    //             ConsoleUtils.verifyFilename(fileTitle.toString(), Regex("^.*[.]([Mm][Dd]|[Tt][Xx][Tt])$"))
-    //
-    //             // Passing the location and title as params to TextWindow
-    //             Application.launch(TextWindow()::class.java, "--title=${fileTitle}", "--location=${fileLocation}")
-    //
-    //         } else {
-    //             throw IllegalArgumentException("[ERROR]: Wrong number of arguments provided!")
-    //         }
-    //     }
-    // } catch (err: IllegalArgumentException) {
-    //     System.err.println(err.message)
-    // }
+    println("Lorem Ipsum Dolor Sit Amet!")
+    //an example connection to H2 DB
+    Database.connect("jdbc:sqlite:test.db")
+
+    transaction {
+        // print sql to std-out
+        // addLogger(StdOutSqlLogger)
+
+        SchemaUtils.create(Cities)
+
+        // insert new city. SQL: INSERT INTO Cities (name) VALUES ('St. Petersburg')
+        val stPeteId = Cities.insert {
+            it[name] = "St. Petersburg"
+        } get Cities.id
+
+        // 'select *' SQL: SELECT Cities.id, Cities.name FROM Cities
+        println("Cities: ${Cities.selectAll()}")
     }
-    connect()
-    query()
 }
 
