@@ -3,6 +3,8 @@
  */
 package notes.multi.console
 
+import notes.multi.utilities.Note
+
 import java.lang.IllegalArgumentException
 
 import notes.multi.utilities.TextWindow
@@ -16,6 +18,8 @@ import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 var conn: Connection? = null
 fun connect() {
@@ -113,28 +117,69 @@ fun query() {
 //     query()
 // }
 
-object Cities: IntIdTable() {
-    val name = varchar("name", 50)
+object Notes : IntIdTable() {
+    val title: Column<String?> = varchar("title", 100).nullable()
+    val text = text("text", eagerLoading = true).nullable()
+    val dateCreated = varchar("dateCreated", 30)
+    val lastModified = varchar("lastModified", 30)
 }
 
+//object Folder : IntIdTable() {
+//    val folderName = varchar("folderName", 100).nullable()
+//    val notes = arrayOf(Notes.id)
+//    val dateCreated = varchar("dateCreated", 30)
+//    val lastUpdated = varchar("lastUpdated", 30)
+//}
+
 fun main(args: Array<String>) {
-    println("Lorem Ipsum Dolor Sit Amet!")
     //an example connection to H2 DB
     Database.connect("jdbc:sqlite:test.db")
 
     transaction {
         // print sql to std-out
-        // addLogger(StdOutSqlLogger)
+        addLogger(StdOutSqlLogger)
 
-        SchemaUtils.create(Cities)
+        // create a table that reflects the Cities class structure
+        SchemaUtils.create(Notes)
 
-        // insert new city. SQL: INSERT INTO Cities (name) VALUES ('St. Petersburg')
-        val stPeteId = Cities.insert {
-            it[name] = "St. Petersburg"
-        } get Cities.id
+        // test an instance
+        var newNote = Note("Test!", StringBuffer("Hi my name is Hoang"), LocalDate.now().toString(), LocalDateTime.now().toString())
 
-        // 'select *' SQL: SELECT Cities.id, Cities.name FROM Cities
-        println("Cities: ${Cities.selectAll()}")
+        // test addNote
+        addNote(newNote)
+
+        // reassign instance to a new note with corresponding id
+        newNote = getNote(1)
+        println(newNote.lastModified)
     }
+}
+
+// insert new note
+fun addNote(note: Note) {
+
+    transaction {
+        SchemaUtils.create(Notes)
+
+        val newNote = Notes.insert {
+            it[Notes.title] = note.title
+            it[Notes.text] = note.text.toString()
+            it[Notes.dateCreated] = note.dateCreated
+            it[Notes.lastModified] = note.lastModified
+        } get Notes.id
+    }
+}
+
+
+fun getNote(id: Int): Note {
+    var tempNote = Note()
+
+    Notes.select { Notes.id eq id }.forEach {
+        tempNote.title = it[Notes.title]
+        tempNote.text = StringBuffer(it[Notes.text])
+        tempNote.dateCreated = it[Notes.dateCreated]
+        tempNote.lastModified = it[Notes.lastModified]
+    }
+
+    return tempNote
 }
 
