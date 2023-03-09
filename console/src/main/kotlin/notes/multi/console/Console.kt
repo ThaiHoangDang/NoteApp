@@ -20,6 +20,7 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.io.path.createTempDirectory
 
 var conn: Connection? = null
 fun connect() {
@@ -156,7 +157,11 @@ fun main(args: Array<String>) {
         updateNote(3, newNote)
 
         // delete note with corresponding id and update id
-        deleteNote(9)
+        deleteNote(6)
+
+        // return a MutableArray of notes
+        var listOfNotes = getAllNotes()
+        println(listOfNotes.count())
     }
 }
 
@@ -206,4 +211,14 @@ fun updateNoteId() {
         }
         id += 1
     }
+}
+
+fun getAllNotes(): MutableList<Note> {
+    var listOfNotes: MutableList<Note> = mutableListOf()
+
+    Notes.selectAll().forEach {
+        var tempNote = Note(it[Notes.title], StringBuffer(it[Notes.text]), it[Notes.dateCreated], it[Notes.lastModified])
+        listOfNotes.add(tempNote)
+    }
+    return listOfNotes
 }
