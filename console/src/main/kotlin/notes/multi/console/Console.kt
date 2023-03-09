@@ -151,27 +151,28 @@ fun main(args: Array<String>) {
         // reassign instance to a new note with corresponding id
         newNote = getNote(1)
         println(newNote.lastModified)
+
+        // update note with corresponding id
+        updateNote(3, newNote)
+
+        // delete note with corresponding id and update id
+        deleteNote(9)
     }
 }
 
 // insert new note
 fun addNote(note: Note) {
-
-    transaction {
-        SchemaUtils.create(Notes)
-
         val newNote = Notes.insert {
             it[Notes.title] = note.title
             it[Notes.text] = note.text.toString()
             it[Notes.dateCreated] = note.dateCreated
             it[Notes.lastModified] = note.lastModified
         } get Notes.id
-    }
 }
 
 
 fun getNote(id: Int): Note {
-    var tempNote = Note()
+    val tempNote = Note()
 
     Notes.select { Notes.id eq id }.forEach {
         tempNote.title = it[Notes.title]
@@ -183,3 +184,26 @@ fun getNote(id: Int): Note {
     return tempNote
 }
 
+fun updateNote(id: Int, note: Note) {
+    Notes.update ({Notes.id eq id}) {
+        it[Notes.title] = note.title
+        it[Notes.text] = note.text.toString()
+        it[Notes.dateCreated] = note.dateCreated
+        it[Notes.lastModified] = note.lastModified
+    }
+}
+
+fun deleteNote(id: Int) {
+    Notes.deleteWhere { Notes.id eq id }
+    updateNoteId()
+}
+
+fun updateNoteId() {
+    var id = 1
+    Notes.slice(Notes.id).selectAll().forEach() {
+        Notes.update ({Notes.id eq it[Notes.id]}) {
+            it[Notes.id] = id
+        }
+        id += 1
+    }
+}
