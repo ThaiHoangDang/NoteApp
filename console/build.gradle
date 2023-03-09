@@ -14,6 +14,12 @@ javafx {
     modules = ['javafx.controls', 'javafx.graphics']
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 repositories {
     mavenCentral()
 }
