@@ -15,7 +15,6 @@ javafx {
 }
 
 dependencies {
-    api project(':list')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
