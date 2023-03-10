@@ -8,10 +8,21 @@ import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
+import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseDragEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
+import javafx.scene.web.HTMLEditor
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.beans.EventHandler
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -41,13 +52,14 @@ class TextWindow(): Application() {
     }
 
     override fun start(stage: Stage) {
-        val path = paramsMap["location"]!!
-        val fileController = FileManager(path, paramsMap["title"]!!)
-        stage.title = paramsMap["title"]
-        val textarea = TextArea()
+        stage.setTitle(paramsMap["title"])
+        val textarea = HTMLEditor()
+        //textarea.setText(paramsMap["text"])
+        textarea.htmlText = paramsMap["text"]
 
-        textarea.text = fileController.openFile()
-        textarea.isWrapText = true
+        //textarea.setWrapText(true)
+
+
         val scroll = ScrollPane()
         val anchor = AnchorPane(textarea)
 
@@ -85,7 +97,33 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> fileController.writeFile(textarea.text)
+                        ButtonType.OK -> {
+                            // filecontroller.writeFile(textarea.htmlText)
+
+
+                            Database.connect("jdbc:sqlite:test.db")
+                            transaction {
+                                SchemaUtils.create(DatabaseOperations.Notes)
+                                var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                                    LocalDate.now().toString(), LocalDateTime.now().toString())
+                                var updateId = paramsMap["id"]?.toInt()
+                                if (updateId !== null && updateId != -1) {
+                                    DatabaseOperations.updateNote(updateId, newNote)
+                                } else {
+                                    DatabaseOperations.addNote(newNote)
+                                }
+                            }
+
+                            //
+                            // Database.connect("jdbc:sqlite:test.db")
+                            // transaction {
+                            //     SchemaUtils.create(DatabaseOperations.Notes)
+                            //     var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                            //         LocalDate.now().toString(), LocalDateTime.now().toString())
+                            //     DatabaseOperations.addNote(newNote)
+                            // }
+
+                        }
                     }
                 }
             } else if (event.code == KeyCode.D && controlPressed) {
@@ -95,8 +133,20 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> {fileController.deleteFile()
-                            Platform.exit()}
+                        ButtonType.OK -> {
+                            // filecontroller.deleteFile()
+
+                            Database.connect("jdbc:sqlite:test.db")
+                            transaction {
+                                SchemaUtils.create(DatabaseOperations.Notes)
+                                var deleteId = paramsMap["id"]?.toInt()
+                                if (deleteId !== null && deleteId != -1) {
+                                    DatabaseOperations.deleteNote(deleteId)
+                                }
+                            }
+
+                            Platform.exit()
+                        }
                     }
                 }
             } else if (event.code == KeyCode.W && controlPressed) {
@@ -120,6 +170,7 @@ class TextWindow(): Application() {
         stage.scene.setOnKeyReleased {
             if (controlPressed) {controlPressed = false}
         }
+
 
         stage.show()
     }

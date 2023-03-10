@@ -7,8 +7,16 @@ import java.lang.IllegalArgumentException
 
 import notes.multi.utilities.TextWindow
 import javafx.application.Application
+import notes.multi.utilities.DatabaseOperations
+import notes.multi.utilities.DatabaseOperations.CRUD.getAllNotes
+import notes.multi.utilities.Note
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.io.path.Path
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 fun main(args: Array<String>) {
@@ -46,31 +54,71 @@ fun main(args: Array<String>) {
         +-------------------------------------------------------------------------------------+
     """.trimIndent()
             )
+            Database.connect("jdbc:sqlite:test.db")
+
+            transaction {
+                // print sql to std-out
+                // addLogger(StdOutSqlLogger)
+
+                // create a table that reflects the Cities class structure
+                SchemaUtils.create(DatabaseOperations.Notes)
+
+                val query = DatabaseOperations.Notes.selectAll()
+                query.forEach {
+                   println(it[DatabaseOperations.Notes.id].toString() + " | " + it[DatabaseOperations.Notes.title])
+                }
+            }
         } else {
             if (args.size < 2) {
 
-                /**
-                 * File Path (can be relative or absolute)
-                 */
-                val filePathArg = args[0]
-
-                /**
-                 * Title of the file
-                 */
-                val fileTitle = Path(filePathArg).fileName
-
-                /**
-                 * Location of the file as text
-                 */
-                val fileLocation = Path(filePathArg).parent ?: System.getProperty("user.dir")
-                if (!File(fileLocation.toString()).isDirectory) throw IllegalArgumentException("[ERROR]: Directory does not exist!")
+                // /**
+                //  * File Path (can be relative or absolute)
+                //  */
+                // val filePathArg = args[0]
+                //
+                // /**
+                //  * Title of the file
+                //  */
+                // val fileTitle = Path(filePathArg).fileName
+                //
+                // /**
+                //  * Location of the file as text
+                //  */
+                // val fileLocation = Path(filePathArg).parent ?: System.getProperty("user.dir")
+                //
+                // if (!File(fileLocation.toString()).isDirectory) throw IllegalArgumentException("[ERROR]: Directory does not exist!")
 
                 // Regex Check for a specific argument format:
-                ConsoleUtils.verifyFilename(fileTitle.toString(), Regex("^.*[.]([Mm][Dd]|[Tt][Xx][Tt])$"))
+                // ConsoleUtils.verifyFilename(fileTitle.toString(), Regex("^.*[.]([Mm][Dd]|[Tt][Xx][Tt])$"))
+
+                val fileTitle = args[0]
+                var fileText: String = ""
+                    Database.connect("jdbc:sqlite:test.db")
+
+                var noteExists = false
+                var noteText: String? = ""
+                var noteId: String = "-1"
+
+                transaction {
+                    // print sql to std-out
+                    // addLogger(StdOutSqlLogger)
+
+                    // create a table that reflects the Cities class structure
+                    SchemaUtils.create(DatabaseOperations.Notes)
+
+
+                    val query = DatabaseOperations.Notes.selectAll()
+                    query.forEach {
+                        if (it[DatabaseOperations.Notes.title] == fileTitle) {
+                            noteExists = true
+                            noteText = it[DatabaseOperations.Notes.text]
+                            noteId = it[DatabaseOperations.Notes.id].toString()
+                        }
+                    }
+                }
 
                 // Passing the location and title as params to TextWindow
-                Application.launch(TextWindow()::class.java, "--title=${fileTitle}", "--location=${fileLocation}")
-
+                Application.launch(TextWindow()::class.java, "--title=$fileTitle", "--text=$noteText", "--id=$noteId")
             } else {
                 throw IllegalArgumentException("[ERROR]: Wrong number of arguments provided!")
             }
