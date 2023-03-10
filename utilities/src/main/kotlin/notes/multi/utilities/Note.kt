@@ -13,13 +13,10 @@ import java.time.LocalDateTime
  * @param lastModified Last modification date of the note
  * @param location Location of the note
  */
-class Note(var title: String = "Untitled",
-           var text: StringBuffer = StringBuffer(""),
-           val author: String = "?", // User class?
-           var extension: String= "?", // necessary?
-           val dateCreated: LocalDate? = LocalDate.now(),
-           var lastModified: LocalDateTime? = LocalDateTime.now(),
-           var location: String? = null) { // path to the created file?
+class Note(var title: String? = "Untitled",
+           var text: StringBuffer? = StringBuffer(""),
+//           val author: String = "?", // User class?
+           var dateCreated: String = LocalDate.now().toString(),
+           var lastModified: String = LocalDateTime.now().toString()) {
     // update last modified date
-    // images?
 }

@@ -17,10 +17,7 @@ class ConsoleUtilsTest {
         var n = Note(
             title = "NeverGonnaGiveYouUp",
             text = StringBuffer(""),
-            author = "Rick Astley",
-            extension = "txt",
-            lastModified = LocalDateTime.now(),
-            location = "."
+            lastModified = LocalDateTime.now().toString(),
         )
 
 

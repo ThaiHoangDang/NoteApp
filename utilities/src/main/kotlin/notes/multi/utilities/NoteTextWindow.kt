@@ -16,7 +16,13 @@ import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import javafx.scene.web.HTMLEditor
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.beans.EventHandler
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -46,12 +52,10 @@ class TextWindow(): Application() {
     }
 
     override fun start(stage: Stage) {
-        val path = paramsMap["text"]!!
-        val filecontroller = FileManager(path, paramsMap["title"]!!)
         stage.setTitle(paramsMap["title"])
         val textarea = HTMLEditor()
         //textarea.setText(paramsMap["text"])
-        textarea.htmlText = filecontroller.openFile()
+        textarea.htmlText = paramsMap["text"]
 
         //textarea.setWrapText(true)
 
@@ -93,7 +97,33 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> filecontroller.writeFile(textarea.htmlText)
+                        ButtonType.OK -> {
+                            // filecontroller.writeFile(textarea.htmlText)
+
+
+                            Database.connect("jdbc:sqlite:test.db")
+                            transaction {
+                                SchemaUtils.create(DatabaseOperations.Notes)
+                                var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                                    LocalDate.now().toString(), LocalDateTime.now().toString())
+                                var updateId = paramsMap["id"]?.toInt()
+                                if (updateId !== null && updateId != -1) {
+                                    DatabaseOperations.updateNote(updateId, newNote)
+                                } else {
+                                    DatabaseOperations.addNote(newNote)
+                                }
+                            }
+
+                            //
+                            // Database.connect("jdbc:sqlite:test.db")
+                            // transaction {
+                            //     SchemaUtils.create(DatabaseOperations.Notes)
+                            //     var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                            //         LocalDate.now().toString(), LocalDateTime.now().toString())
+                            //     DatabaseOperations.addNote(newNote)
+                            // }
+
+                        }
                     }
                 }
             } else if (event.code == KeyCode.D && controlPressed) {
@@ -103,8 +133,20 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> {filecontroller.deleteFile()
-                            Platform.exit()}
+                        ButtonType.OK -> {
+                            // filecontroller.deleteFile()
+
+                            Database.connect("jdbc:sqlite:test.db")
+                            transaction {
+                                SchemaUtils.create(DatabaseOperations.Notes)
+                                var deleteId = paramsMap["id"]?.toInt()
+                                if (deleteId !== null && deleteId != -1) {
+                                    DatabaseOperations.deleteNote(deleteId)
+                                }
+                            }
+
+                            Platform.exit()
+                        }
                     }
                 }
             } else if (event.code == KeyCode.W && controlPressed) {
