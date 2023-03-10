@@ -10,6 +10,12 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 dependencies {
     implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.0'
     implementation 'org.apache.commons:commons-text'
@@ -25,12 +31,6 @@ application {
 javafx {
     version = '18.0.2'
     modules = ['javafx.controls', 'javafx.graphics', 'javafx.web']
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
 }
 
 test {
