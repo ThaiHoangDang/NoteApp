@@ -27,6 +27,12 @@ javafx {
     modules = ['javafx.controls', 'javafx.graphics', 'javafx.web']
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 test {
     useJUnitPlatform()
 }
