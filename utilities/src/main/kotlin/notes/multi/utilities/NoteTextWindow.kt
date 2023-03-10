@@ -8,10 +8,15 @@ import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
+import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseDragEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
+import javafx.scene.web.HTMLEditor
+import java.beans.EventHandler
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -41,13 +46,16 @@ class TextWindow(): Application() {
     }
 
     override fun start(stage: Stage) {
-        val path = paramsMap["location"]!!
-        val fileController = FileManager(path, paramsMap["title"]!!)
-        stage.title = paramsMap["title"]
-        val textarea = TextArea()
+        val path = paramsMap["text"]!!
+        val filecontroller = FileManager(path, paramsMap["title"]!!)
+        stage.setTitle(paramsMap["title"])
+        val textarea = HTMLEditor()
+        //textarea.setText(paramsMap["text"])
+        textarea.htmlText = filecontroller.openFile()
 
-        textarea.text = fileController.openFile()
-        textarea.isWrapText = true
+        //textarea.setWrapText(true)
+
+
         val scroll = ScrollPane()
         val anchor = AnchorPane(textarea)
 
@@ -85,7 +93,7 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> fileController.writeFile(textarea.text)
+                        ButtonType.OK -> filecontroller.writeFile(textarea.htmlText)
                     }
                 }
             } else if (event.code == KeyCode.D && controlPressed) {
@@ -95,7 +103,7 @@ class TextWindow(): Application() {
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
-                        ButtonType.OK -> {fileController.deleteFile()
+                        ButtonType.OK -> {filecontroller.deleteFile()
                             Platform.exit()}
                     }
                 }
@@ -120,6 +128,7 @@ class TextWindow(): Application() {
         stage.scene.setOnKeyReleased {
             if (controlPressed) {controlPressed = false}
         }
+
 
         stage.show()
     }

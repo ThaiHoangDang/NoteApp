@@ -69,8 +69,7 @@ fun main(args: Array<String>) {
                 ConsoleUtils.verifyFilename(fileTitle.toString(), Regex("^.*[.]([Mm][Dd]|[Tt][Xx][Tt])$"))
 
                 // Passing the location and title as params to TextWindow
-                Application.launch(TextWindow()::class.java, "--title=${fileTitle}", "--location=${fileLocation}")
-
+                Application.launch(TextWindow()::class.java, "--title=$fileTitle", "--text=$fileLocation")
             } else {
                 throw IllegalArgumentException("[ERROR]: Wrong number of arguments provided!")
             }
