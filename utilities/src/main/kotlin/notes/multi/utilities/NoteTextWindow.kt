@@ -3,14 +3,11 @@ package notes.multi.utilities
 import javafx.application.Application
 import javafx.stage.Stage
 import javafx.scene.Scene
-import javafx.scene.control.ScrollPane
-import javafx.scene.control.TextArea
 import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
 import javafx.scene.Node
-import javafx.scene.control.Alert
-import javafx.scene.control.ButtonType
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
@@ -76,7 +73,93 @@ class TextWindow(): Application() {
          * Responsive Design and scroll properties
          */
         scroll.content = textarea
-        val box = VBox(anchor)
+
+
+        /**
+         * MenuBar Design and implementation
+         */
+
+        val menubar = MenuBar()
+        val filemenu = Menu("File")
+        val modechange = Menu("Mode")
+
+        // File menu items
+        val open = MenuItem("Open")
+        val save = MenuItem("Save")
+        val delete = MenuItem("Delete")
+
+        // Modechange menu items
+        val dark = MenuItem("Dark")
+        val light = MenuItem("Light")
+
+        save.setOnAction {
+            val warning = Alert(Alert.AlertType.CONFIRMATION)
+            warning.title = "SAVE"
+            warning.contentText = "Do you want to save this file?"
+            val result = warning.showAndWait()
+            if (result.isPresent) {
+                when (result.get()) {
+                    ButtonType.OK -> {
+                        // filecontroller.writeFile(textarea.htmlText)
+
+
+                        Database.connect("jdbc:sqlite:test.db")
+                        transaction {
+                            SchemaUtils.create(DatabaseOperations.Notes)
+                            var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                                LocalDate.now().toString(), LocalDateTime.now().toString())
+                            var updateId = paramsMap["id"]?.toInt()
+                            if (updateId !== null && updateId != -1) {
+                                DatabaseOperations.updateNote(updateId, newNote)
+                            } else {
+                                DatabaseOperations.addNote(newNote)
+                            }
+                        }
+
+                        //
+                        // Database.connect("jdbc:sqlite:test.db")
+                        // transaction {
+                        //     SchemaUtils.create(DatabaseOperations.Notes)
+                        //     var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
+                        //         LocalDate.now().toString(), LocalDateTime.now().toString())
+                        //     DatabaseOperations.addNote(newNote)
+                        // }
+
+                    }
+                }
+            }
+        }
+
+        delete.setOnAction {
+            val warning = Alert(Alert.AlertType.CONFIRMATION)
+            warning.title = "DELETE"
+            warning.contentText = "Do you delete this file?"
+            val result = warning.showAndWait()
+            if (result.isPresent) {
+                when (result.get()) {
+                    ButtonType.OK -> {
+                        // filecontroller.deleteFile()
+
+                        Database.connect("jdbc:sqlite:test.db")
+                        transaction {
+                            SchemaUtils.create(DatabaseOperations.Notes)
+                            var deleteId = paramsMap["id"]?.toInt()
+                            if (deleteId !== null && deleteId != -1) {
+                                DatabaseOperations.deleteNote(deleteId)
+                            }
+                        }
+
+                        Platform.exit()
+                    }
+                }
+            }
+        }
+
+        filemenu.items.addAll(open, save, delete)
+        modechange.items.addAll(dark, light)
+        menubar.menus.addAll(filemenu, modechange)
+
+        val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)
 
         stage.scene = Scene(box, 300.0, 300.0)
