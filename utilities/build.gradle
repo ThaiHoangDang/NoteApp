@@ -20,10 +20,24 @@ javafx {
     modules = ['javafx.controls', 'javafx.graphics', 'javafx.web']
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 }
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
