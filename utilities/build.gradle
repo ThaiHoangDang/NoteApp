@@ -14,9 +14,17 @@ javafx {
     modules = ['javafx.controls', 'javafx.graphics']
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     api project(':list')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 }
 
 test {
@@ -25,6 +33,6 @@ test {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
