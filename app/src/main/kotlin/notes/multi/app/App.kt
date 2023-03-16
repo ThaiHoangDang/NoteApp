@@ -3,5 +3,21 @@
  */
 package notes.multi.app
 
+
+import java.lang.IllegalArgumentException
+
+import notes.multi.utilities.TextWindow
+import javafx.application.Application
+import notes.multi.utilities.DatabaseOperations
+import notes.multi.utilities.DatabaseOperations.CRUD.getAllNotes
+import notes.multi.utilities.Note
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+
 fun main() {
+
+    Application.launch(TextWindow()::class.java)
 }

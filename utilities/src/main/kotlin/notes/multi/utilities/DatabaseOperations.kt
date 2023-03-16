@@ -70,11 +70,18 @@ class DatabaseOperations() {
         }
 
         fun getAllNotes(): MutableList<Note> {
+            Database.connect("jdbc:sqlite:test.db")
             var listOfNotes: MutableList<Note> = mutableListOf()
-
-            Notes.selectAll().forEach {
-                var tempNote = Note(it[Notes.title], StringBuffer(it[Notes.text]), it[Notes.dateCreated], it[Notes.lastModified])
-                listOfNotes.add(tempNote)
+            transaction {
+                Notes.selectAll().forEach {
+                    var tempNote = Note(
+                        it[Notes.title],
+                        StringBuffer(it[Notes.text]),
+                        it[Notes.dateCreated],
+                        it[Notes.lastModified]
+                    )
+                    listOfNotes.add(tempNote)
+                }
             }
             return listOfNotes
         }

@@ -6,6 +6,7 @@ import javafx.scene.Scene
 import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -13,9 +14,11 @@ import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import javafx.scene.web.HTMLEditor
+import javafx.stage.Modality
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.beans.EventHandler
 import java.time.LocalDate
@@ -42,6 +45,18 @@ class TextWindow(): Application() {
      */
     private var controlPressed = false
 
+    private var opened = ""
+    private var newname = true
+
+    private fun notesname() : MutableList<String> {
+        val retlist = mutableListOf<String>()
+        val temp = DatabaseOperations.getAllNotes()
+        for (i in temp) {
+            retlist.add(i.title?:"")
+        }
+        return retlist
+    }
+
     override fun init() {
         super.init()
         val params = parameters
@@ -49,10 +64,16 @@ class TextWindow(): Application() {
     }
 
     override fun start(stage: Stage) {
-        stage.setTitle(paramsMap["title"])
+
         val textarea = HTMLEditor()
         //textarea.setText(paramsMap["text"])
-        textarea.htmlText = paramsMap["text"]
+        if (paramsMap.isNotEmpty()) {
+            stage.setTitle(paramsMap["title"])
+            textarea.htmlText = paramsMap["text"]
+            newname = false
+        } else {
+            stage.setTitle("Untitled")
+        }
 
         //textarea.setWrapText(true)
 
@@ -91,6 +112,20 @@ class TextWindow(): Application() {
         // Modechange menu items
         val dark = MenuItem("Dark")
         val light = MenuItem("Light")
+
+        open.setOnAction {
+            val browser = Stage()
+            browser.initModality(Modality.WINDOW_MODAL)
+            browser.initOwner(stage)
+            val obsfs = FXCollections.observableArrayList<String>()
+            obsfs.addAll(notesname())
+            val notesview = ListView(obsfs)
+
+            val generalcontainer = VBox(notesview)
+            browser.scene = Scene(generalcontainer)
+
+            browser.show()
+        }
 
         save.setOnAction {
             val warning = Alert(Alert.AlertType.CONFIRMATION)
