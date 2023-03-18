@@ -6,20 +6,20 @@ import javafx.scene.Scene
 import javafx.scene.layout.VBox
 import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
-import javafx.scene.Node
+import javafx.collections.FXCollections
 import javafx.scene.control.*
+import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseDragEvent
-import javafx.scene.input.MouseEvent
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.web.HTMLEditor
+import javafx.stage.Modality
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.beans.EventHandler
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -42,6 +42,18 @@ class TextWindow(): Application() {
      */
     private var controlPressed = false
 
+    private var newname = true
+    private var curfile = Note()
+
+    private fun notesname() : MutableList<String> {
+        val retlist = mutableListOf<String>()
+        val temp = DatabaseOperations.getAllNotes()
+        for (i in temp) {
+            retlist.add(i.title?:"")
+        }
+        return retlist
+    }
+
     override fun init() {
         super.init()
         val params = parameters
@@ -49,10 +61,16 @@ class TextWindow(): Application() {
     }
 
     override fun start(stage: Stage) {
-        stage.setTitle(paramsMap["title"])
+
         val textarea = HTMLEditor()
         //textarea.setText(paramsMap["text"])
-        textarea.htmlText = paramsMap["text"]
+        if (paramsMap.isNotEmpty()) {
+            stage.setTitle(paramsMap["title"])
+            textarea.htmlText = paramsMap["text"]
+            newname = false
+        } else {
+            stage.setTitle("Untitled")
+        }
 
         //textarea.setWrapText(true)
 
@@ -92,6 +110,85 @@ class TextWindow(): Application() {
         val dark = MenuItem("Dark")
         val light = MenuItem("Light")
 
+        open.setOnAction {
+            val browser = Stage()
+            browser.initModality(Modality.WINDOW_MODAL)
+            browser.initOwner(stage)
+            val obsfs = FXCollections.observableArrayList<Note>()
+            val noteslist = DatabaseOperations.getAllNotes()
+            obsfs.addAll(noteslist)
+            val titlecolumn = TableColumn<Note, String>("title")
+            titlecolumn.setCellValueFactory { it-> it.value.titleGUI}
+            val datecolumn = TableColumn<Note, String>("date modified")
+            datecolumn.setCellValueFactory { it->it.value.lastModifiedGUI }
+            val notesview = TableView<Note>()
+            notesview.items = obsfs
+            notesview.columns.addAll(titlecolumn, datecolumn)
+            notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+
+
+            notesview.setOnMouseClicked { event->
+                val index = notesview.selectionModel.selectedIndex
+                if (index != -1) {
+                    if (event.clickCount == 2) {
+                        val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                        textarea.htmlText = tempnote.text.toString()
+                        stage.title = tempnote.title
+                        browser.close()
+                        curfile = tempnote
+                    }
+                }
+            }
+
+            val delete = Button("Delete")
+            val open = Button("Open")
+
+            open.setOnAction {
+                val index = notesview.selectionModel.selectedIndex
+                if (index != -1) {
+                        val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                        textarea.htmlText = tempnote.text.toString()
+                        stage.title = tempnote.title
+                        browser.close()
+                        curfile = tempnote
+                }
+            }
+
+            delete.setOnAction {
+                val index = notesview.selectionModel.selectedIndex
+                if (index != -1) {
+                    val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                    if (curfile.id == tempnote.id) {
+                        val warning = Alert(Alert.AlertType.ERROR)
+                        warning.title = "ERROR"
+                        warning.contentText = "This file is opened in program"
+                        warning.showAndWait()
+                    } else {
+                        val warningdel = Alert(Alert.AlertType.CONFIRMATION)
+                        warningdel.title = "DELETE"
+                        warningdel.contentText = "Do you delete this file?"
+                        val result = warningdel.showAndWait()
+                        if (result.isPresent) {
+                            when (result.get()) {
+                                ButtonType.OK -> {
+                                    DatabaseOperations.deleteNote(tempnote)
+                                    obsfs.removeAt(index)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            val buttoncontainer = HBox(10.0, open, delete)
+
+            val generalcontainer = VBox(notesview, buttoncontainer)
+            VBox.setVgrow(notesview, Priority.ALWAYS)
+            browser.scene = Scene(generalcontainer)
+
+            browser.show()
+        }
+
         save.setOnAction {
             val warning = Alert(Alert.AlertType.CONFIRMATION)
             warning.title = "SAVE"
@@ -100,21 +197,24 @@ class TextWindow(): Application() {
             if (result.isPresent) {
                 when (result.get()) {
                     ButtonType.OK -> {
+                        curfile.lastModified = LocalDateTime.now().toString()
+                        curfile.text = StringBuffer(textarea.htmlText)
+                        DatabaseOperations.addUpdateNote(curfile)
                         // filecontroller.writeFile(textarea.htmlText)
 
-
-                        Database.connect("jdbc:sqlite:test.db")
-                        transaction {
-                            SchemaUtils.create(DatabaseOperations.Notes)
-                            var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
-                                LocalDate.now().toString(), LocalDateTime.now().toString())
-                            var updateId = paramsMap["id"]?.toInt()
-                            if (updateId !== null && updateId != -1) {
-                                DatabaseOperations.updateNote(updateId, newNote)
-                            } else {
-                                DatabaseOperations.addNote(newNote)
-                            }
-                        }
+//                        Database.connect("jdbc:sqlite:test.db")
+//                        transaction {
+//                            SchemaUtils.create(DatabaseOperations.Notes)
+//                            var newNote = Note(
+//                                UUID.randomUUID().toString() ,paramsMap["title"], StringBuffer(textarea.htmlText),
+//                                LocalDate.now().toString(), LocalDateTime.now().toString())
+//                            var updateId = paramsMap["id"]?.toInt()
+//                            if (updateId !== null && updateId != -1) {
+//                                DatabaseOperations.updateNote(updateId, newNote)
+//                            } else {
+//                                DatabaseOperations.addNote(newNote)
+//                            }
+//                        }
 
                         //
                         // Database.connect("jdbc:sqlite:test.db")
@@ -138,16 +238,17 @@ class TextWindow(): Application() {
             if (result.isPresent) {
                 when (result.get()) {
                     ButtonType.OK -> {
+                        DatabaseOperations.deleteNote(curfile)
                         // filecontroller.deleteFile()
 
-                        Database.connect("jdbc:sqlite:test.db")
-                        transaction {
-                            SchemaUtils.create(DatabaseOperations.Notes)
-                            var deleteId = paramsMap["id"]?.toInt()
-                            if (deleteId !== null && deleteId != -1) {
-                                DatabaseOperations.deleteNote(deleteId)
-                            }
-                        }
+//                        Database.connect("jdbc:sqlite:test.db")
+//                        transaction {
+//                            SchemaUtils.create(DatabaseOperations.Notes)
+//                            var deleteId = paramsMap["id"]?.toInt()
+//                            if (deleteId !== null && deleteId != -1) {
+//                                DatabaseOperations.deleteNote(deleteId)
+//                            }
+//                        }
 
                         Platform.exit()
                     }
@@ -181,21 +282,22 @@ class TextWindow(): Application() {
                 if (result.isPresent) {
                     when (result.get()) {
                         ButtonType.OK -> {
+                            DatabaseOperations.addUpdateNote(curfile)
                             // filecontroller.writeFile(textarea.htmlText)
 
 
-                            Database.connect("jdbc:sqlite:test.db")
-                            transaction {
-                                SchemaUtils.create(DatabaseOperations.Notes)
-                                var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
-                                    LocalDate.now().toString(), LocalDateTime.now().toString())
-                                var updateId = paramsMap["id"]?.toInt()
-                                if (updateId !== null && updateId != -1) {
-                                    DatabaseOperations.updateNote(updateId, newNote)
-                                } else {
-                                    DatabaseOperations.addNote(newNote)
-                                }
-                            }
+//                            Database.connect("jdbc:sqlite:test.db")
+//                            transaction {
+//                                SchemaUtils.create(DatabaseOperations.Notes)
+//                                var newNote = Note(UUID.randomUUID().toString(), paramsMap["title"], StringBuffer(textarea.htmlText),
+//                                    LocalDate.now().toString(), LocalDateTime.now().toString())
+//                                var updateId = paramsMap["id"]?.toInt()
+//                                if (updateId !== null && updateId != -1) {
+//                                    DatabaseOperations.updateNote(updateId, newNote)
+//                                } else {
+//                                    DatabaseOperations.addNote(newNote)
+//                                }
+//                            }
 
                             //
                             // Database.connect("jdbc:sqlite:test.db")
@@ -217,16 +319,17 @@ class TextWindow(): Application() {
                 if (result.isPresent) {
                     when (result.get()) {
                         ButtonType.OK -> {
+                            DatabaseOperations.deleteNote(curfile)
                             // filecontroller.deleteFile()
 
-                            Database.connect("jdbc:sqlite:test.db")
-                            transaction {
-                                SchemaUtils.create(DatabaseOperations.Notes)
-                                var deleteId = paramsMap["id"]?.toInt()
-                                if (deleteId !== null && deleteId != -1) {
-                                    DatabaseOperations.deleteNote(deleteId)
-                                }
-                            }
+//                            Database.connect("jdbc:sqlite:test.db")
+//                            transaction {
+//                                SchemaUtils.create(DatabaseOperations.Notes)
+//                                var deleteId = paramsMap["id"]?.toInt()
+//                                if (deleteId !== null && deleteId != -1) {
+//                                    DatabaseOperations.deleteNote(deleteId)
+//                                }
+//                            }
 
                             Platform.exit()
                         }
