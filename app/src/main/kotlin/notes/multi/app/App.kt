@@ -47,8 +47,12 @@ fun main() {
         println(note.id + " | " + note.title)
     }
 
+    // test addUpdateNote
+    note1.text = StringBuffer("New text")
+    DatabaseOperations.addUpdateNote(note1)
 
-    DatabaseOperations.deleteNote(note1)
+    var note4 = Note(title = "note4")
+    DatabaseOperations.addUpdateNote(note4)
 
 
 //    Application.launch(TextWindow()::class.java)

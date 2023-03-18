@@ -57,6 +57,26 @@ class DatabaseOperations() {
             }
         }
 
+        fun addUpdateNote(note: Note) {
+            var exist = false
+
+            transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
+                Notes.selectAll().forEach {
+                    if (it[Notes.id] == note.id) {
+                        exist = true
+                    }
+                }
+            }
+
+            if (exist) {
+                updateNote(note)
+            } else {
+                addNote(note)
+            }
+        }
+
         fun deleteNote(note: Note) {
             transaction {
                 Notes.deleteWhere { Notes.id eq note.id }
