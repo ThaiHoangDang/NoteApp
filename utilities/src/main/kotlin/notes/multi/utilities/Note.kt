@@ -1,5 +1,6 @@
 package notes.multi.utilities
 
+import javafx.beans.property.SimpleStringProperty
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -19,5 +20,8 @@ class Note(
     var text: StringBuffer? = StringBuffer(""),
 //           val author: String = "?", // User class?
     var dateCreated: String = LocalDate.now().toString(),
-    var lastModified: String = LocalDateTime.now().toString()) {
+    var lastModified: String = LocalDateTime.now().toString(),
+    var titleGUI:SimpleStringProperty = SimpleStringProperty(title),
+    var lastModifiedGUI: SimpleStringProperty = SimpleStringProperty(lastModified)
+) {
 }
