@@ -32,18 +32,20 @@ class DatabaseOperations() {
         }
 
         fun getNote(id: String): Note {
-            val tempNote = Note()
+            var note = Note()
 
             transaction {
                 Notes.select { Notes.id eq id }.forEach {
-                    tempNote.id = it[Notes.id]
-                    tempNote.title = it[Notes.title]
-                    tempNote.text = StringBuffer(it[Notes.text])
-                    tempNote.dateCreated = it[Notes.dateCreated]
-                    tempNote.lastModified = it[Notes.lastModified]
+                    var tempNote = Note(
+                    it[Notes.id],
+                    it[Notes.title],
+                    StringBuffer(it[Notes.text]),
+                    it[Notes.dateCreated],
+                    it[Notes.lastModified])
+                    note = tempNote
                 }
             }
-            return tempNote
+            return note
         }
 
         fun updateNote(note: Note) {
