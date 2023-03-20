@@ -12,19 +12,18 @@ class HttpOperations {
         fun get(id: String = ""): String {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("https://pokeapi.co/api/v2/pokemon/$id"))
+                .uri(URI.create("http://localhost:8080/notes/$id"))
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             return response.body()
         }
 
-        fun post(note: Note): String {
+        fun post(note: RemoteNote): String {
             val jsonNote = Klaxon().toJsonString(note)
-            println(jsonNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("https://36eb19dc-1dd7-455d-ba32-68c2cd9d307e.mock.pstmn.io"))
+                .uri(URI.create("http://localhost:8080/notes/"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
@@ -32,11 +31,11 @@ class HttpOperations {
             return response.body()
         }
 
-        fun put(note: Note): String {
+        fun put(note: RemoteNote): String {
             val jsonNote = Klaxon().toJsonString(note)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("https://36eb19dc-1dd7-455d-ba32-68c2cd9d307e.mock.pstmn.io"))
+                .uri(URI.create("http://localhost:8080/notes/"))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
@@ -47,7 +46,7 @@ class HttpOperations {
         fun delete(id: String): String {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http....$id"))
+                .uri(URI.create("http://localhost:8080/notes/$id"))
                 .DELETE()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())

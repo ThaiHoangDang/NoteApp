@@ -5,28 +5,29 @@ package notes.multi.app
 
 
 import javafx.application.Application
-import notes.multi.utilities.DatabaseOperations
-import notes.multi.utilities.HttpOperations
-import notes.multi.utilities.Note
+import notes.multi.utilities.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.xml.crypto.Data
-import notes.multi.utilities.TextWindow
 
 
 fun main() {
     Database.connect("jdbc:sqlite:test.db")
-    val testnote = Note()
+    val testnote = RemoteNote()
     testnote.title = "SPECIALLLL"
+    testnote.text = "???"
+    println(HttpOperations.post(testnote))
+    println(testnote.id)
 
 //    println(HttpOperations.post(testnote))
 
-    println(HttpOperations.put(testnote))
+//    println(HttpOperations.put(testnote))
 
-//    println(HttpOperations.get())
+//    println(HttpOperations.get("1060cca2-1b4f-4669-9868-68a90efa70c3"))
+
 //    println(HttpOperations.get("ditto"))
 
 
