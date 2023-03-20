@@ -16,11 +16,14 @@ class HttpOperations {
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
             return response.body()
         }
 
-        fun post(note: RemoteNote): String {
-            val jsonNote = Klaxon().toJsonString(note)
+        fun post(note: Note): String {
+            val tempNote = RemoteNote(note.id, note.title, note.text.toString(), note.dateCreated, note.lastModified)
+
+            val jsonNote = Klaxon().toJsonString(tempNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/notes/"))
@@ -28,11 +31,14 @@ class HttpOperations {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
             return response.body()
         }
 
-        fun put(note: RemoteNote): String {
-            val jsonNote = Klaxon().toJsonString(note)
+        fun put(note: Note): String {
+            val tempNote = RemoteNote(note.id, note.title, note.text.toString(), note.dateCreated, note.lastModified)
+
+            val jsonNote = Klaxon().toJsonString(tempNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/notes/"))
@@ -40,6 +46,7 @@ class HttpOperations {
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
             return response.body()
         }
 
@@ -50,6 +57,7 @@ class HttpOperations {
                 .DELETE()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
             return response.body()
         }
     }
