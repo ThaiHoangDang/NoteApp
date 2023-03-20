@@ -1,6 +1,7 @@
 package notes.multi.utilities
 
 import com.beust.klaxon.Klaxon
+import com.beust.klaxon.json
 import java.net.URI
 import java.net.URL
 import java.net.http.HttpClient
@@ -39,9 +40,11 @@ class HttpOperations {
             val tempNote = RemoteNote(note.id, note.title, note.text.toString(), note.dateCreated, note.lastModified)
 
             val jsonNote = Klaxon().toJsonString(tempNote)
+
+            println(jsonNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/notes/"))
+                .uri(URI.create("http://localhost:8080/notes/${tempNote.id}"))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
