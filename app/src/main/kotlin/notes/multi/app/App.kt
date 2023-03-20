@@ -6,6 +6,7 @@ package notes.multi.app
 
 import javafx.application.Application
 import notes.multi.utilities.DatabaseOperations
+import notes.multi.utilities.HttpOperations
 import notes.multi.utilities.Note
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -20,6 +21,18 @@ fun main() {
     Database.connect("jdbc:sqlite:test.db")
     val testnote = Note()
     testnote.title = "SPECIALLLL"
-    DatabaseOperations.addUpdateNote(testnote)
-    Application.launch(TextWindow()::class.java)
+
+//    println(HttpOperations.post(testnote))
+
+    println(HttpOperations.put(testnote))
+
+//    println(HttpOperations.get())
+//    println(HttpOperations.get("ditto"))
+
+
+
+
+
+//    DatabaseOperations.addUpdateNote(testnote)
+//    Application.launch(TextWindow()::class.java)
 }
