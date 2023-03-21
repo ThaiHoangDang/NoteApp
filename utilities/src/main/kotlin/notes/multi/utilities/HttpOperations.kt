@@ -1,24 +1,22 @@
 package notes.multi.utilities
 
 import com.beust.klaxon.Klaxon
-import com.beust.klaxon.json
 import java.net.URI
-import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 class HttpOperations {
     companion object Request {
-        fun get(id: String = ""): String {
+        fun get(id: String = ""): Note {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/notes/$id"))
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-
-            return response.body()
+            val remoteNote = Klaxon().parse<RemoteNote>(response.body())
+            return Note(remoteNote!!.id, remoteNote.title, StringBuffer(remoteNote.text), remoteNote.dateCreated, remoteNote.lastModified)
         }
 
         fun post(note: Note): String {
@@ -40,8 +38,6 @@ class HttpOperations {
             val tempNote = RemoteNote(note.id, note.title, note.text.toString(), note.dateCreated, note.lastModified)
 
             val jsonNote = Klaxon().toJsonString(tempNote)
-
-            println(jsonNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/notes/${tempNote.id}"))
