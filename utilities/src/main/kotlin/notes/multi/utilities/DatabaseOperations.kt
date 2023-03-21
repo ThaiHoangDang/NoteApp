@@ -64,8 +64,6 @@ class DatabaseOperations() {
         }
 
         fun addUpdateNote(note: Note) {
-            println(note.text)
-
             var exist = false
 
             transaction {
@@ -86,7 +84,6 @@ class DatabaseOperations() {
         }
 
         fun deleteNote(note: Note) {
-            println("I deleted: "+note.id)
             transaction {
                 Notes.deleteWhere { Notes.id eq note.id }
             }
