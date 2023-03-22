@@ -7,11 +7,19 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 class HttpOperations {
+
     companion object Request {
+        /**
+         * Endpoint for the web service
+         * Change accordingly
+         *  - Testing: Run web service in IntelliJ and point to "http://localhost:8080/"
+         *  - Local Production: Locally deploy app using Tomcat and point to "http://localhost:8080/notes-app"
+         */
+        private const val WebServiceEndpoint = "http://localhost:8080/notes-app"
         fun get(id: String = ""): Note {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/notes/$id"))
+                .uri(URI.create("${WebServiceEndpoint}/notes/$id"))
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
@@ -25,7 +33,7 @@ class HttpOperations {
             val jsonNote = Klaxon().toJsonString(tempNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/notes/"))
+                .uri(URI.create("${WebServiceEndpoint}/notes/"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
@@ -40,7 +48,7 @@ class HttpOperations {
             val jsonNote = Klaxon().toJsonString(tempNote)
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/notes/${tempNote.id}"))
+                .uri(URI.create("${WebServiceEndpoint}/notes/${tempNote.id}"))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
@@ -52,7 +60,7 @@ class HttpOperations {
         fun delete(id: String): String {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/notes/$id"))
+                .uri(URI.create("${WebServiceEndpoint}/notes/$id"))
                 .DELETE()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
