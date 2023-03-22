@@ -36,6 +36,7 @@ class DatabaseOperations() {
 //            var note = Note()
 //
 //            transaction {
+//             SchemaUtils.create(DatabaseOperations.Notes)
 //                Notes.select { Notes.id eq id }.forEach {
 //                    var tempNote = Note(
 //                    it[Notes.id],
@@ -53,6 +54,8 @@ class DatabaseOperations() {
 
         fun updateNote(note: Note) {
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.update ({Notes.id eq note.id}) {
                     it[Notes.title] = note.title
                     it[Notes.text] = note.text.toString()
@@ -85,6 +88,8 @@ class DatabaseOperations() {
 
         fun deleteNote(note: Note) {
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.deleteWhere { Notes.id eq note.id }
             }
             HttpOperations.delete(note.id)
@@ -94,6 +99,8 @@ class DatabaseOperations() {
             var listOfNotes: MutableList<Note> = mutableListOf()
 
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.selectAll().forEach {
                     var tempNote = Note(
                         it[Notes.id],
