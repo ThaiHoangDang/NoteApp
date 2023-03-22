@@ -29,27 +29,33 @@ class DatabaseOperations() {
                     it[Notes.lastModified] = note.lastModified
                 } get Notes.id
             }
+            HttpOperations.post(note)
         }
 
         fun getNote(id: String): Note {
-            var note = Note()
+//            var note = Note()
+//
+//            transaction {
+//             SchemaUtils.create(DatabaseOperations.Notes)
+//                Notes.select { Notes.id eq id }.forEach {
+//                    var tempNote = Note(
+//                    it[Notes.id],
+//                    it[Notes.title],
+//                    StringBuffer(it[Notes.text]),
+//                    it[Notes.dateCreated],
+//                    it[Notes.lastModified])
+//                    note = tempNote
+//                }
+//            }
+//            return note
 
-            transaction {
-                Notes.select { Notes.id eq id }.forEach {
-                    var tempNote = Note(
-                    it[Notes.id],
-                    it[Notes.title],
-                    StringBuffer(it[Notes.text]),
-                    it[Notes.dateCreated],
-                    it[Notes.lastModified])
-                    note = tempNote
-                }
-            }
-            return note
+            return HttpOperations.get(id)
         }
 
         fun updateNote(note: Note) {
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.update ({Notes.id eq note.id}) {
                     it[Notes.title] = note.title
                     it[Notes.text] = note.text.toString()
@@ -57,6 +63,7 @@ class DatabaseOperations() {
                     it[Notes.lastModified] = note.lastModified
                 }
             }
+            HttpOperations.put(note)
         }
 
         fun addUpdateNote(note: Note) {
@@ -81,14 +88,19 @@ class DatabaseOperations() {
 
         fun deleteNote(note: Note) {
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.deleteWhere { Notes.id eq note.id }
             }
+            HttpOperations.delete(note.id)
         }
 
         fun getAllNotes(): MutableList<Note> {
             var listOfNotes: MutableList<Note> = mutableListOf()
 
             transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+
                 Notes.selectAll().forEach {
                     var tempNote = Note(
                         it[Notes.id],
