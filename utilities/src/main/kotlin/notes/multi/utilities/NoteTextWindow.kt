@@ -104,18 +104,20 @@ class TextWindow(): Application() {
         // File menu items
         val open = MenuItem("Open")
         val save = MenuItem("Save")
+        val rename = MenuItem("Rename")
         val delete = MenuItem("Delete")
 
         // Modechange menu items
         val dark = MenuItem("Dark")
         val light = MenuItem("Light")
 
+
         open.setOnAction {
             val browser = Stage()
             browser.initModality(Modality.WINDOW_MODAL)
             browser.initOwner(stage)
-            val obsfs = FXCollections.observableArrayList<Note>()
             val noteslist = DatabaseOperations.getAllNotes()
+            val obsfs = FXCollections.observableArrayList<Note>()
             obsfs.addAll(noteslist)
             val titlecolumn = TableColumn<Note, String>("title")
             titlecolumn.setCellValueFactory { it-> it.value.titleGUI}
@@ -131,11 +133,12 @@ class TextWindow(): Application() {
                 val index = notesview.selectionModel.selectedIndex
                 if (index != -1) {
                     if (event.clickCount == 2) {
-                        val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                        val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                         textarea.htmlText = tempnote.text.toString()
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
+                        newname = false
                     }
                 }
             }
@@ -146,18 +149,19 @@ class TextWindow(): Application() {
             open.setOnAction {
                 val index = notesview.selectionModel.selectedIndex
                 if (index != -1) {
-                        val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                        val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                         textarea.htmlText = tempnote.text.toString()
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
+                        newname = false
                 }
             }
 
             delete.setOnAction {
                 val index = notesview.selectionModel.selectedIndex
                 if (index != -1) {
-                    val tempnote = DatabaseOperations.getNote(noteslist[index].id)
+                    val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                     if (curfile.id == tempnote.id) {
                         val warning = Alert(Alert.AlertType.ERROR)
                         warning.title = "ERROR"
@@ -197,35 +201,59 @@ class TextWindow(): Application() {
             if (result.isPresent) {
                 when (result.get()) {
                     ButtonType.OK -> {
-                        curfile.lastModified = LocalDateTime.now().toString()
-                        curfile.text = StringBuffer(textarea.htmlText)
-                        DatabaseOperations.addUpdateNote(curfile)
-                        // filecontroller.writeFile(textarea.htmlText)
+                        if (newname) {
+                            while(true) {
+                                val renaming = TextInputDialog()
+                                renaming.headerText = "Enter new name"
+                                val result = renaming.showAndWait()
+                                if (result.isPresent) {
+                                    if (renaming.editor.text == "") {
+                                        val warning = Alert(Alert.AlertType.ERROR)
+                                        warning.title = "ERROR"
+                                        warning.contentText = "Empty can't be filename"
+                                        warning.showAndWait()
+                                    } else {
+                                        stage.title = renaming.editor.text
+                                        curfile.title = stage.title
+                                        newname = false
+                                        break
+                                    }
+                                } else {
+                                    break
+                                }
+                            }
+                        }
 
-//                        Database.connect("jdbc:sqlite:test.db")
-//                        transaction {
-//                            SchemaUtils.create(DatabaseOperations.Notes)
-//                            var newNote = Note(
-//                                UUID.randomUUID().toString() ,paramsMap["title"], StringBuffer(textarea.htmlText),
-//                                LocalDate.now().toString(), LocalDateTime.now().toString())
-//                            var updateId = paramsMap["id"]?.toInt()
-//                            if (updateId !== null && updateId != -1) {
-//                                DatabaseOperations.updateNote(updateId, newNote)
-//                            } else {
-//                                DatabaseOperations.addNote(newNote)
-//                            }
-//                        }
-
-                        //
-                        // Database.connect("jdbc:sqlite:test.db")
-                        // transaction {
-                        //     SchemaUtils.create(DatabaseOperations.Notes)
-                        //     var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
-                        //         LocalDate.now().toString(), LocalDateTime.now().toString())
-                        //     DatabaseOperations.addNote(newNote)
-                        // }
-
+                        if(!newname) {
+                            curfile.lastModified = LocalDateTime.now().toString()
+                            curfile.text = StringBuffer(textarea.htmlText)
+                            DatabaseOperations.addUpdateNote(curfile)
+                        }
                     }
+                }
+            }
+        }
+
+        rename.setOnAction {
+            while(true) {
+                val renaming = TextInputDialog()
+                renaming.headerText = "Enter new name"
+                val result = renaming.showAndWait()
+                if (result.isPresent) {
+                    if (renaming.editor.text == "") {
+                        val warning = Alert(Alert.AlertType.ERROR)
+                        warning.title = "ERROR"
+                        warning.contentText = "Empty can't be filename"
+                        warning.showAndWait()
+                    } else {
+                        stage.title = renaming.editor.text
+                        curfile.title = stage.title
+                        curfile.lastModified = LocalDateTime.now().toString()
+                        newname = false
+                        break
+                    }
+                } else {
+                    break
                 }
             }
         }
@@ -256,7 +284,7 @@ class TextWindow(): Application() {
             }
         }
 
-        filemenu.items.addAll(open, save, delete)
+        filemenu.items.addAll(open, save, rename, delete)
         modechange.items.addAll(dark, light)
         menubar.menus.addAll(filemenu, modechange)
 
@@ -275,6 +303,7 @@ class TextWindow(): Application() {
             if (event.code == KeyCode.CONTROL) {
                 controlPressed = true
             } else if (event.code == KeyCode.S && controlPressed) {
+                controlPressed = false
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "SAVE"
                 warning.contentText = "Do you want to save this file?"
@@ -282,36 +311,39 @@ class TextWindow(): Application() {
                 if (result.isPresent) {
                     when (result.get()) {
                         ButtonType.OK -> {
-                            DatabaseOperations.addUpdateNote(curfile)
-                            // filecontroller.writeFile(textarea.htmlText)
+                            if (newname) {
+                                while(true) {
+                                    val renaming = TextInputDialog()
+                                    renaming.headerText = "Enter new name"
+                                    val result = renaming.showAndWait()
+                                    if (result.isPresent) {
+                                        if (renaming.editor.text == "") {
+                                            val warning = Alert(Alert.AlertType.ERROR)
+                                            warning.title = "ERROR"
+                                            warning.contentText = "Empty can't be filename"
+                                            warning.showAndWait()
+                                        } else {
+                                            stage.title = renaming.editor.text
+                                            curfile.title = stage.title
+                                            newname = false
+                                            break
+                                        }
+                                    } else {
+                                        break
+                                    }
+                                }
+                            }
 
-
-//                            Database.connect("jdbc:sqlite:test.db")
-//                            transaction {
-//                                SchemaUtils.create(DatabaseOperations.Notes)
-//                                var newNote = Note(UUID.randomUUID().toString(), paramsMap["title"], StringBuffer(textarea.htmlText),
-//                                    LocalDate.now().toString(), LocalDateTime.now().toString())
-//                                var updateId = paramsMap["id"]?.toInt()
-//                                if (updateId !== null && updateId != -1) {
-//                                    DatabaseOperations.updateNote(updateId, newNote)
-//                                } else {
-//                                    DatabaseOperations.addNote(newNote)
-//                                }
-//                            }
-
-                            //
-                            // Database.connect("jdbc:sqlite:test.db")
-                            // transaction {
-                            //     SchemaUtils.create(DatabaseOperations.Notes)
-                            //     var newNote = Note(paramsMap["title"], StringBuffer(textarea.htmlText),
-                            //         LocalDate.now().toString(), LocalDateTime.now().toString())
-                            //     DatabaseOperations.addNote(newNote)
-                            // }
-
+                            if(!newname) {
+                                curfile.lastModified = LocalDateTime.now().toString()
+                                curfile.text = StringBuffer(textarea.htmlText)
+                                DatabaseOperations.addUpdateNote(curfile)
+                            }
                         }
                     }
                 }
             } else if (event.code == KeyCode.D && controlPressed) {
+                controlPressed = false
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "DELETE"
                 warning.contentText = "Do you delete this file?"
@@ -336,6 +368,7 @@ class TextWindow(): Application() {
                     }
                 }
             } else if (event.code == KeyCode.W && controlPressed) {
+                controlPressed = false
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "WARNING"
                 warning.contentText = "The current work will not be saved. Are you sure you want to quit?"
