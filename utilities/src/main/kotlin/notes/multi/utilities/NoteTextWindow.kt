@@ -44,6 +44,7 @@ class TextWindow(): Application() {
 
     private var newname = true
     private var curfile = Note()
+    var isDarkMode = false
 
     private fun notesname() : MutableList<String> {
         val retlist = mutableListOf<String>()
@@ -256,6 +257,8 @@ class TextWindow(): Application() {
             }
         }
 
+
+
         filemenu.items.addAll(open, save, delete)
         modechange.items.addAll(dark, light)
         menubar.menus.addAll(filemenu, modechange)
@@ -264,6 +267,18 @@ class TextWindow(): Application() {
         VBox.setVgrow(anchor, Priority.ALWAYS)
 
         stage.scene = Scene(box, 300.0, 300.0)
+
+        dark.setOnAction {
+            if (!isDarkMode) {
+                toggleDarkMode(stage.scene, isDarkMode)
+            }
+        }
+
+        light.setOnAction {
+            if (isDarkMode) {
+                toggleDarkMode(stage.scene, isDarkMode)
+            }
+        }
 
         /**
          * Logic for key presses:
