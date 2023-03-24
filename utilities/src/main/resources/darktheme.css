@@ -1,3 +1,7 @@
+.html-editor{
+    -fx-background-color: #121212;
+}
+
 .html-editor .top-toolbar {
     -fx-background-color: #292929;
 }
@@ -6,11 +10,24 @@
     -fx-background-color: #292929;
 }
 
-.html-editor .button, .html-editor .toggle-button, .html-editor .color-picker {
+#textarea .html-editor .web-view {
+    -fx-background-color: #f0f0f0;
+}
+
+.html-editor-foreground, .html-editor-background {
+    -fx-color-label-visible: true;
+    -fx-color-rect-x: 0;
+    -fx-color-rect-y: 10;
+    -fx-color-rect-width: 16;
+    -fx-color-rect-height: 5;
+    -fx-padding: 0;
+}
+
+/*.html-editor .button, .html-editor .toggle-button, .html-editor .color-picker {
     -fx-background-color: #292929;
     -fx-border-color: #E0E0E0;
 
-}
+}*/
 
 /*Combo Boxes*/
 .html-editor .combo-box {
@@ -90,13 +107,14 @@
 
 /*Buttons*/
 .button {
+    -fx-text-fill: #E0E0E0;
     -fx-background-color: #292929;
     -fx-border-color: #E0E0E0;
 }
 
 .button:hover{
-    -fx-border-color: #222222;
-    -fx-background-color: #E0E0E0;
+    -fx-background-color: #EEAE4D;
+    -fx-text-fill: #121212;
 }
 
 .button:pressed{
@@ -132,6 +150,23 @@
     -fx-background-color: #E0E0E0;
 }
 
+/*ToggleButtons*/
+.toggle-button {
+    -fx-text-fill: #E0E0E0;
+    -fx-background-color: #292929;
+    -fx-border-color: #E0E0E0;
+}
+
+.toggle-button:hover{
+    -fx-background-color: #EEAE4D;
+    -fx-text-fill: #121212;
+}
+
+.toggle-button:pressed{
+    -fx-border-color: #474747;
+    -fx-background-color: #474747;
+}
+
 /*ColorPicker*/
 
 .color-picker {
@@ -146,6 +181,7 @@
 /*ColorPalette*/
 .color-palette{
     -fx-background-color: #292929;
+    -fx-text-fill: #E0E0E0;
     -fx-spacing: 15px;
         -fx-background-insets: 0, 1, 2;
         -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
@@ -163,14 +199,14 @@
     -fx-border-color: transparent;
 }
 
-.color-palette > .color-picker-grid > .color-square {
+.color-palette .color-picker-grid .color-square {
     -fx-background-color: transparent;
     -fx-background-insets: -1, 0;
     -fx-padding: 0.5;
     -fx-border: black;
 }
 
-.color-palette-region > .color-square.hover-square {
+.color-palette-region .color-square.hover-square {
     -fx-background-color: #EEAE4D;
     -fx-border-color: #EEAE4D;
     -fx-background-insets: -1;
@@ -182,3 +218,74 @@
     -fx-border-color: #121212;
 }
 
+/*ColorDialogueBox*/
+.custom-color-dialog {
+    -fx-background-color: #292929;
+    -fx-text-fill: #E0E0E0;
+}
+
+.custom-color-dialog .controls-pane .customcolor-controls-background {
+    -fx-background-color: #292929;
+}
+
+.custom-color-dialog .controls-pane .current-new-color-grid .label {
+    -fx-text-fill: #E0E0E0;
+}
+
+/*.custom-color-dialog .controls-pane #settings-pane {
+    -fx-hgap: 1.4166667em;
+    -fx-vgap: 0.3333333em;
+}*/
+
+/*MenuBar*/
+.menu {
+    -fx-text-fill: #E0E0E0;
+}
+
+.menu-bar {
+    -fx-background-color: #121212;
+    background-color: #121212;
+    -fx-text-fill: #E0E0E0;
+    text-fill: #E0E0E0;
+}
+
+.menu-bar .menu-button {
+    -fx-background-color: #121212;
+    background-color: #121212;
+    -fx-text-fill: #E0E0E0;
+    text-fill: #E0E0E0;
+}
+
+.menu-bar .menu-button:hover {
+    -fx-background-color: #EEAE4D;
+    background-color: #EEAE4D;
+    -fx-text-fill: #121212;
+    text-fill:#121212;
+}
+
+.menu-item {
+    -fx-background-color: #121212;
+    background-color: #121212;
+    -fx-text-fill: #E0E0E0;
+    text-fill: #E0E0E0;
+    -fx-border-width: 0;
+}
+
+.menu-item:hover {
+    -fx-background-color: #EEAE4D;
+    background-color: #EEAE4D;
+    -fx-text-fill: #121212;
+    text-fill: #121212;
+}
+
+.label {
+    -fx-text-fill: #E0E0E0;
+}
+
+.label:hover {
+    -fx-text-fill: #121212;
+}
+
+.text-input-control {
+    -fx-text-fill: #E0E0E0;
+}
