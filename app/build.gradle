@@ -8,6 +8,15 @@ plugins {
     id 'application'
     id 'org.jetbrains.kotlin.jvm'
     id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.26.0'
+}
+
+jlink {
+    forceMerge("kotlin")
+    launcher {
+        name = "notes-app"
+        moduleName = "notes.multi.app"
+    }
 }
 
 java {
@@ -36,6 +45,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
+    mainModule = 'notes.multi.app'
     mainClass = 'notes.multi.app.AppKt'
 }
 
