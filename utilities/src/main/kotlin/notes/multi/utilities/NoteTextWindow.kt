@@ -268,15 +268,18 @@ class TextWindow(): Application() {
 
         stage.scene = Scene(box, 300.0, 300.0)
 
+
         dark.setOnAction {
             if (!isDarkMode) {
-                toggleDarkMode(textarea, isDarkMode)
+                toggleDarkMode(stage.scene, textarea, isDarkMode)
+                isDarkMode = !isDarkMode
             }
         }
 
         light.setOnAction {
             if (isDarkMode) {
-                toggleDarkMode(textarea, isDarkMode)
+                toggleDarkMode(stage.scene, textarea, isDarkMode)
+                isDarkMode = !isDarkMode
             }
         }
 
