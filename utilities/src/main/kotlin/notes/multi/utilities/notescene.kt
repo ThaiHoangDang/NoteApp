@@ -66,6 +66,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         val menubar = MenuBar()
         val filemenu = Menu("File")
         val modechange = Menu("Mode")
+        val option = Menu("Option")
 
         // File menu items
         val new = MenuItem("New")
@@ -77,6 +78,9 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         // Modechange menu items
         val dark = MenuItem("Dark")
         val light = MenuItem("Light")
+
+        // option menu items
+        val sync = MenuItem("Sync")
 
         new.setOnAction {
             val newwindow = Stage()
@@ -261,17 +265,6 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     when (result.get()) {
                         ButtonType.OK -> {
                             DatabaseOperations.deleteNote(curfile)
-                            // filecontroller.deleteFile()
-
-//                        Database.connect("jdbc:sqlite:test.db")
-//                        transaction {
-//                            SchemaUtils.create(DatabaseOperations.Notes)
-//                            var deleteId = paramsMap["id"]?.toInt()
-//                            if (deleteId !== null && deleteId != -1) {
-//                                DatabaseOperations.deleteNote(deleteId)
-//                            }
-//                        }
-
                             stage.close()
                         }
                     }
@@ -284,9 +277,32 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             }
         }
 
+        sync.setOnAction {
+            val warning = Alert(Alert.AlertType.CONFIRMATION)
+            warning.title = "SYNC"
+            warning.contentText = "After synchronization, your current work may be lost. Are you sure sync?"
+            val result = warning.showAndWait()
+            if (result.isPresent) {
+                when (result.get()) {
+                    ButtonType.OK -> {
+                        try {
+                            //TODO: WRITE SYNC DB LOGIC
+                            throw Exception()
+                        } catch(e:Exception) {
+                            val warning = Alert(Alert.AlertType.ERROR)
+                            warning.title = "ERROR"
+                            warning.contentText = "Sync failed due to no internet."
+                            warning.showAndWait()
+                        }
+                    }
+                }
+            }
+        }
+
         filemenu.items.addAll(new, open, save, rename, delete)
         modechange.items.addAll(dark, light)
-        menubar.menus.addAll(filemenu, modechange)
+        option.items.addAll(sync)
+        menubar.menus.addAll(filemenu, modechange, option)
 
         val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)

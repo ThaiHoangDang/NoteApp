@@ -44,4 +44,9 @@ class GUInote {
             }
         }
     }
+
+    fun update() {
+
+    }
+
 }
