@@ -15,7 +15,7 @@ class HttpOperations {
          *  - Testing: Run web service in IntelliJ and point to "http://localhost:8080/"
          *  - Local Production: Locally deploy app using Tomcat and point to "http://localhost:8080/notes-app"
          */
-        private const val WebServiceEndpoint = "https://3723-72-142-18-42.ngrok.io"
+        private const val WebServiceEndpoint = "http://18.117.170.43:8080/notes-app"
         fun get(id: String = ""): Note {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
