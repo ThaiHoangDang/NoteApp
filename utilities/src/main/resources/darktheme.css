@@ -23,6 +23,11 @@
     -fx-padding: 0;
 }
 
+.dialog-pane {
+    -fx-background-color: black;
+    -fx-padding: 0;
+}
+
 /*.html-editor .button, .html-editor .toggle-button, .html-editor .color-picker {
     -fx-background-color: #292929;
     -fx-border-color: #E0E0E0;

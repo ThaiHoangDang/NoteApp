@@ -1,25 +1,21 @@
 package notes.multi.utilities
 
 import javafx.application.Application
-import javafx.stage.Stage
-import javafx.scene.Scene
-import javafx.scene.layout.VBox
-import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Modality
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.LocalDate
+import javafx.stage.Stage
 import java.time.LocalDateTime
 import java.util.*
+
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -190,11 +186,11 @@ class TextWindow(): Application() {
                     val tempnote = DatabaseOperations.getNote(noteslist[index].id)
                     if (curfile.id == tempnote.id) {
                         val warning = Alert(Alert.AlertType.ERROR)
-                        warning.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                        val dialogPane: DialogPane = warning.dialogPane
                         if(isDarkMode){
-                            warning.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                            dialogPane.stylesheets.add("alertStylesheet.css")
                         }else{
-                            warning.dialogPane.style = "-fx-background-color: white; -fx-text-fill: black;"
+                            dialogPane.stylesheets.remove("alertStylesheet.css")
                         }
                         warning.title = "ERROR"
                         warning.contentText = "This file is opened in program"
@@ -205,10 +201,11 @@ class TextWindow(): Application() {
                         warningdel.title = "DELETE"
                         warningdel.contentText = "Do you want to delete this file?"
 
+                        val dialogPane: DialogPane = warningdel.dialogPane
                         if(isDarkMode){
-                            warningdel.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                            dialogPane.stylesheets.add("alertStylesheet.css")
                         }else{
-                            warningdel.dialogPane.style = "-fx-background-color: white;  -fx-text-fill: black;"
+                            dialogPane.stylesheets.remove("alertStylesheet.css")
                         }
                         val result = warningdel.showAndWait()
                         if (result.isPresent) {
@@ -238,14 +235,19 @@ class TextWindow(): Application() {
 
         save.setOnAction {
             val warning = Alert(Alert.AlertType.CONFIRMATION)
-
             warning.title = "SAVE"
             warning.contentText = "Do you want to save this file?"
+
+            val dialogPane: DialogPane = warning.dialogPane
+
+
             if(isDarkMode){
-                warning.dialogPane.style = "-fx-background-color: black;  -fx-text-fill: white;"
+                dialogPane.stylesheets.add("alertStylesheet.css")
+//                dialogPane.style = "-fx-background-color: black; -fx-text-background-color: white; -"
 
             }else{
-                warning.dialogPane.style = "-fx-background-color: white;  -fx-text-fill: black;"
+                dialogPane.stylesheets.remove("alertStylesheet.css")
+//                dialogPane.style = "-fx-background-color: white; -fx-text-background-color: black;"
             }
 
             val result = warning.showAndWait()
