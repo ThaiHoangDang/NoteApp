@@ -186,6 +186,24 @@ class TextWindow(): Application() {
             val generalcontainer = VBox(notesview, buttoncontainer)
             VBox.setVgrow(notesview, Priority.ALWAYS)
             browser.scene = Scene(generalcontainer)
+            dark.setOnAction {
+                if (!isDarkMode) {
+                    toggleDarkModeBrowser(browser.scene, isDarkMode)
+                    isDarkMode = !isDarkMode
+                }
+            }
+
+            light.setOnAction {
+                if (isDarkMode) {
+                    toggleDarkModeBrowser(browser.scene, isDarkMode)
+                    isDarkMode = !isDarkMode
+                }
+            }
+
+
+            browser.sceneProperty().addListener { _, _, newScene ->
+                toggleDarkModeBrowser(newScene, isDarkMode)
+            }
 
             browser.show()
         }

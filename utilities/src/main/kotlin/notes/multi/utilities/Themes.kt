@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.web.HTMLEditor
-import javafx.scene.web.WebView;
+import javafx.scene.web.WebView
 import javax.swing.text.html.StyleSheet
 
 fun toggleDarkMode(scene: Scene, editor: HTMLEditor, isDarkMode: Boolean) {
@@ -31,6 +31,20 @@ fun toggleDarkMode(scene: Scene, editor: HTMLEditor, isDarkMode: Boolean) {
         scene.stylesheets.add("darktheme.css")
 
 
+    }
+    //isDarkMode = !isDarkMode
+}
+
+fun toggleDarkModeBrowser(scene: Scene,  isDarkMode: Boolean) {
+    //val darktheme: StyleSheet = StyleSheet(false, "notes/multi/utilities/darktheme.css")
+    if (isDarkMode) {
+        //note.text.toString(). = Color.WHITE
+        //scene.root.style = "-fx-background-color: ${Color.BLACK.toString().replace("0x", "#")}; -fx-text-fill: ${Color.WHITE.toString().replace("0x", "#")}
+        scene.stylesheets.remove("darkthemeBrowser.css.css")
+    } else {
+        //note.text = Color.BLACK
+        //scene.root.style = "-fx-background-color: ${Color.WHITE.toString().replace("0x", "#")}; -fx-text-fill: ${Color.BLACK.toString().replace("0x", "#")}
+        scene.stylesheets.add("darkthemeBrowser.css.css")
     }
     //isDarkMode = !isDarkMode
 }
