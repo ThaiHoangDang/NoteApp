@@ -1,11 +1,54 @@
-.root {
-    -fx-background-color: black;
+
+
+.table-view .column-header {
+    -fx-background-color: #424140;
+    -fx-text-background-color: white;
 }
-.table-view .column-header-background {
-    -fx-background-color: black;
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
 }
-.table-column-cell .table-cell {
+.table-row-cell: hover {
+    -fx-background-color: #f56e3d;
+    -fx-text-background-color: orange;
+}
+.table-row-cell: odd{
+    -fx-background-color: #1e1e1f;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+    -fx-text-background-color: white;
+}
+.table-row-cell: even{
+    -fx-background-color: #48494a;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+    -fx-text-background-color: white;
+}
+.table-row-cell:selected {
+    -fx-background-color: #f7561b;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+.root{
+    -fx-background-color: #262626;
+}
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
     -fx-background-color: black;
 }
 
-
+.table-view .corner {
+    -fx-background-color: black;
+}
+.table-view .footer {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center-right;
+    -fx-padding: 5px;
+}

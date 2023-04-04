@@ -126,14 +126,35 @@ class TextWindow(): Application() {
             notesview.items = obsfs
             notesview.columns.addAll(titlecolumn, datecolumn)
             notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
-            notesview.style = "-fx-background-color: black;" // set background color of tableview
-            notesview.lookupAll(".column-header-background").forEach {
-                it.style = "-fx-background-color: black;" // set background color of all columns
-            }
 
-            notesview.lookupAll(".table-column-cell .table-cell").forEach {
-                it.style = "-fx-background-color: black;" // set background color of all cells
-            }
+//            if (isDarkMode) {
+
+//                notesview.style = "-fx-background-color: black;" // set background color of tableview
+//                notesview.lookupAll(".column-header-background").forEach {
+//                    it.style = "-fx-background-color: black;" // set background color of all columns
+//                }
+
+
+
+//                notesview.style = """
+//                    .table-row-cell {
+//                    -fx-background-color: black;
+//                    -fx-background-insets: 0, 0 0 1 0;
+//                    -fx-padding: 0.0em;
+//                    }
+//                """
+
+
+//            }else{
+//                notesview.style = "-fx-background-color: white;" // set background color of tableview
+//                notesview.lookupAll(".column-header-background").forEach {
+//                    it.style = "-fx-background-color: white;" // set background color of all columns
+//                }
+//
+//                notesview.lookupAll(".table-column-cell .table-cell").forEach {
+//                    it.style = "-fx-background-color: white;" // set background color of all cells
+//                }
+//            }
 
 
             notesview.setOnMouseClicked { event->
@@ -169,13 +190,26 @@ class TextWindow(): Application() {
                     val tempnote = DatabaseOperations.getNote(noteslist[index].id)
                     if (curfile.id == tempnote.id) {
                         val warning = Alert(Alert.AlertType.ERROR)
+                        warning.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                        if(isDarkMode){
+                            warning.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                        }else{
+                            warning.dialogPane.style = "-fx-background-color: white; -fx-text-fill: black;"
+                        }
                         warning.title = "ERROR"
                         warning.contentText = "This file is opened in program"
                         warning.showAndWait()
                     } else {
                         val warningdel = Alert(Alert.AlertType.CONFIRMATION)
+
                         warningdel.title = "DELETE"
-                        warningdel.contentText = "Do you delete this file?"
+                        warningdel.contentText = "Do you want to delete this file?"
+
+                        if(isDarkMode){
+                            warningdel.dialogPane.style = "-fx-background-color: black; -fx-text-fill: white;"
+                        }else{
+                            warningdel.dialogPane.style = "-fx-background-color: white;  -fx-text-fill: black;"
+                        }
                         val result = warningdel.showAndWait()
                         if (result.isPresent) {
                             when (result.get()) {
@@ -193,30 +227,27 @@ class TextWindow(): Application() {
             val generalcontainer = VBox(notesview, buttoncontainer)
             VBox.setVgrow(notesview, Priority.ALWAYS)
             browser.scene = Scene(generalcontainer)
-            dark.setOnAction {
-                if (!isDarkMode) {
-                    toggleDarkModeBrowser(browser.scene, isDarkMode)
-                    //isDarkMode = !isDarkMode
-                }
+            if(isDarkMode){
+                addDarkModeBrowser(browser.scene)
+            }else{
+                removeDarkModeBrowser(browser.scene)
             }
-
-            light.setOnAction {
-                if (isDarkMode) {
-                    toggleDarkModeBrowser(browser.scene, isDarkMode)
-                    //isDarkMode = !isDarkMode
-                }
-            }
-
-
-
 
             browser.show()
         }
 
         save.setOnAction {
             val warning = Alert(Alert.AlertType.CONFIRMATION)
+
             warning.title = "SAVE"
             warning.contentText = "Do you want to save this file?"
+            if(isDarkMode){
+                warning.dialogPane.style = "-fx-background-color: black;  -fx-text-fill: white;"
+
+            }else{
+                warning.dialogPane.style = "-fx-background-color: white;  -fx-text-fill: black;"
+            }
+
             val result = warning.showAndWait()
             if (result.isPresent) {
                 when (result.get()) {
@@ -289,13 +320,13 @@ class TextWindow(): Application() {
         val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)
 
+
         stage.scene = Scene(box, 300.0, 300.0)
 
 
         dark.setOnAction {
             if (!isDarkMode) {
                 toggleDarkMode(stage.scene, textarea, isDarkMode)
-                //toggleDarkModeBrowser(browser.scene, isDarkMode)
                 isDarkMode = !isDarkMode
             }
         }
@@ -303,7 +334,6 @@ class TextWindow(): Application() {
         light.setOnAction {
             if (isDarkMode) {
                 toggleDarkMode(stage.scene, textarea, isDarkMode)
-                //toggleDarkModeBrowser(browser.scene, isDarkMode)
                 isDarkMode = !isDarkMode
             }
         }

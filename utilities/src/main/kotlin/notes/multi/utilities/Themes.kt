@@ -35,16 +35,12 @@ fun toggleDarkMode(scene: Scene, editor: HTMLEditor, isDarkMode: Boolean) {
     //isDarkMode = !isDarkMode
 }
 
-fun toggleDarkModeBrowser(scene: Scene,  isDarkMode: Boolean) {
-    //val darktheme: StyleSheet = StyleSheet(false, "notes/multi/utilities/darktheme.css")
-    if (isDarkMode) {
-        //note.text.toString(). = Color.WHITE
-        //scene.root.style = "-fx-background-color: ${Color.BLACK.toString().replace("0x", "#")}; -fx-text-fill: ${Color.WHITE.toString().replace("0x", "#")}
-        scene.stylesheets.remove("darkthemeBrowser.css")
-    } else {
-        //note.text = Color.BLACK
-        //scene.root.style = "-fx-background-color: ${Color.WHITE.toString().replace("0x", "#")}; -fx-text-fill: ${Color.BLACK.toString().replace("0x", "#")}
+fun addDarkModeBrowser(scene: Scene) {
         scene.stylesheets.add("darkthemeBrowser.css")
-    }
+    //isDarkMode = !isDarkMode
+}
+
+fun removeDarkModeBrowser(scene: Scene) {
+    scene.stylesheets.remove("darkthemeBrowser.css")
     //isDarkMode = !isDarkMode
 }
