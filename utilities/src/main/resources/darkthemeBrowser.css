@@ -1,0 +1,11 @@
+.root {
+    -fx-background-color: black;
+}
+.table-view .column-header-background {
+    -fx-background-color: black;
+}
+.table-column-cell .table-cell {
+    -fx-background-color: black;
+}
+
+

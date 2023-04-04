@@ -40,11 +40,11 @@ fun toggleDarkModeBrowser(scene: Scene,  isDarkMode: Boolean) {
     if (isDarkMode) {
         //note.text.toString(). = Color.WHITE
         //scene.root.style = "-fx-background-color: ${Color.BLACK.toString().replace("0x", "#")}; -fx-text-fill: ${Color.WHITE.toString().replace("0x", "#")}
-        scene.stylesheets.remove("darkthemeBrowser.css.css")
+        scene.stylesheets.remove("darkthemeBrowser.css")
     } else {
         //note.text = Color.BLACK
         //scene.root.style = "-fx-background-color: ${Color.WHITE.toString().replace("0x", "#")}; -fx-text-fill: ${Color.BLACK.toString().replace("0x", "#")}
-        scene.stylesheets.add("darkthemeBrowser.css.css")
+        scene.stylesheets.add("darkthemeBrowser.css")
     }
     //isDarkMode = !isDarkMode
 }

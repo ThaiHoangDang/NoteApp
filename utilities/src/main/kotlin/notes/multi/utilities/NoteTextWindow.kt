@@ -126,6 +126,14 @@ class TextWindow(): Application() {
             notesview.items = obsfs
             notesview.columns.addAll(titlecolumn, datecolumn)
             notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+            notesview.style = "-fx-background-color: black;" // set background color of tableview
+            notesview.lookupAll(".column-header-background").forEach {
+                it.style = "-fx-background-color: black;" // set background color of all columns
+            }
+
+            notesview.lookupAll(".table-column-cell .table-cell").forEach {
+                it.style = "-fx-background-color: black;" // set background color of all cells
+            }
 
 
             notesview.setOnMouseClicked { event->
@@ -182,28 +190,25 @@ class TextWindow(): Application() {
             }
 
             val buttoncontainer = HBox(10.0, open, delete)
-
             val generalcontainer = VBox(notesview, buttoncontainer)
             VBox.setVgrow(notesview, Priority.ALWAYS)
             browser.scene = Scene(generalcontainer)
             dark.setOnAction {
                 if (!isDarkMode) {
                     toggleDarkModeBrowser(browser.scene, isDarkMode)
-                    isDarkMode = !isDarkMode
+                    //isDarkMode = !isDarkMode
                 }
             }
 
             light.setOnAction {
                 if (isDarkMode) {
                     toggleDarkModeBrowser(browser.scene, isDarkMode)
-                    isDarkMode = !isDarkMode
+                    //isDarkMode = !isDarkMode
                 }
             }
 
 
-            browser.sceneProperty().addListener { _, _, newScene ->
-                toggleDarkModeBrowser(newScene, isDarkMode)
-            }
+
 
             browser.show()
         }
@@ -290,6 +295,7 @@ class TextWindow(): Application() {
         dark.setOnAction {
             if (!isDarkMode) {
                 toggleDarkMode(stage.scene, textarea, isDarkMode)
+                //toggleDarkModeBrowser(browser.scene, isDarkMode)
                 isDarkMode = !isDarkMode
             }
         }
@@ -297,6 +303,7 @@ class TextWindow(): Application() {
         light.setOnAction {
             if (isDarkMode) {
                 toggleDarkMode(stage.scene, textarea, isDarkMode)
+                //toggleDarkModeBrowser(browser.scene, isDarkMode)
                 isDarkMode = !isDarkMode
             }
         }
