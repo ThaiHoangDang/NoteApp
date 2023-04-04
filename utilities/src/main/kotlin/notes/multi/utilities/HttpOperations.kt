@@ -15,7 +15,7 @@ class HttpOperations {
          *  - Testing: Run web service in IntelliJ and point to "http://localhost:8080/"
          *  - Local Production: Locally deploy app using Tomcat and point to "http://localhost:8080/notes-app"
          */
-        private const val WebServiceEndpoint = "http://localhost:8080/notes-app"
+        private const val WebServiceEndpoint = "http://18.117.170.43:8080/notes-app"
         fun get(id: String = ""): Note {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
@@ -25,6 +25,26 @@ class HttpOperations {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             val remoteNote = Klaxon().parse<RemoteNote>(response.body())
             return Note(remoteNote!!.id, remoteNote.title, StringBuffer(remoteNote.text), remoteNote.dateCreated, remoteNote.lastModified)
+        }
+
+        fun getAllNotes(): MutableList<Note> {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("${WebServiceEndpoint}/notes/"))
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+            val remoteNote = Klaxon().parseArray<RemoteNote>(response.body())!!.toMutableList()
+
+            val returnNote = mutableListOf<Note>()
+
+            for (note in remoteNote) {
+                val tempNote: Note = Note(note.id, note.title, StringBuffer(note.text), note.dateCreated, note.lastModified)
+                returnNote.add(tempNote)
+            }
+
+            return returnNote
         }
 
         fun post(note: Note): String {
@@ -62,6 +82,39 @@ class HttpOperations {
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("${WebServiceEndpoint}/notes/$id"))
                 .DELETE()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+            return response.body()
+        }
+
+        fun lastUpdate(): String {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("${WebServiceEndpoint}/lastSave/"))
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            val lastSave = Klaxon().parse<LastSave>(response.body())
+            return lastSave!!.lastUpdate
+        }
+
+        fun sync(listOfNotes: MutableList<Note>, lastUpdate: String): String {
+            val listOfRemoteNotes: MutableList<RemoteNote> = mutableListOf()
+
+            for (note in listOfNotes) {
+                val tempRemoteNote = RemoteNote(note.id, note.title, note.text.toString(), note.dateCreated, note.lastModified)
+                listOfRemoteNotes.add(tempRemoteNote)
+            }
+
+            val syncRequest = SyncRequest(lastUpdate, listOfRemoteNotes)
+
+            val jsonNote = Klaxon().toJsonString(syncRequest)
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("${WebServiceEndpoint}/sync/"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonNote))
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

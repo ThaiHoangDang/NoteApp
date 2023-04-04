@@ -5,6 +5,8 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.ConnectException
+import java.time.LocalDateTime
 
 class DatabaseOperations() {
     object Notes : Table() {
@@ -14,6 +16,12 @@ class DatabaseOperations() {
         val dateCreated = varchar("dateCreated", 30)
         val lastModified = varchar("lastModified", 30)
         override val primaryKey = PrimaryKey(id)
+    }
+
+    object LastUpdated : Table() {
+        val id = text("id", eagerLoading = true)
+        val lastUpdate = varchar("lastUpdated", 30)
+        override val primaryKey = PrimaryKey(LastUpdated.id)
     }
 
     companion object CRUD {
@@ -29,27 +37,31 @@ class DatabaseOperations() {
                     it[Notes.lastModified] = note.lastModified
                 } get Notes.id
             }
-            HttpOperations.post(note)
+            updateLastUpdate()
+//            try {
+//                HttpOperations.post(note)
+//            } catch (e: ConnectException) {
+//                println(e.message)
+//            }
         }
 
         fun getNote(id: String): Note {
-//            var note = Note()
-//
-//            transaction {
-//             SchemaUtils.create(DatabaseOperations.Notes)
-//                Notes.select { Notes.id eq id }.forEach {
-//                    var tempNote = Note(
-//                    it[Notes.id],
-//                    it[Notes.title],
-//                    StringBuffer(it[Notes.text]),
-//                    it[Notes.dateCreated],
-//                    it[Notes.lastModified])
-//                    note = tempNote
-//                }
-//            }
-//            return note
+            var note = Note()
 
-            return HttpOperations.get(id)
+            transaction {
+                SchemaUtils.create(DatabaseOperations.Notes)
+                Notes.select { Notes.id eq id }.forEach {
+                    var tempNote = Note(
+                    it[Notes.id],
+                    it[Notes.title],
+                    StringBuffer(it[Notes.text]),
+                    it[Notes.dateCreated],
+                    it[Notes.lastModified])
+                    note = tempNote
+                }
+            }
+            return note
+//            return HttpOperations.get(id)
         }
 
         fun updateNote(note: Note) {
@@ -63,7 +75,8 @@ class DatabaseOperations() {
                     it[Notes.lastModified] = note.lastModified
                 }
             }
-            HttpOperations.put(note)
+            updateLastUpdate()
+//            HttpOperations.put(note)
         }
 
         fun addUpdateNote(note: Note) {
@@ -92,7 +105,8 @@ class DatabaseOperations() {
 
                 Notes.deleteWhere { Notes.id eq note.id }
             }
-            HttpOperations.delete(note.id)
+            updateLastUpdate()
+//            HttpOperations.delete(note.id)
         }
 
         fun getAllNotes(): MutableList<Note> {
@@ -114,13 +128,66 @@ class DatabaseOperations() {
             }
             return listOfNotes
         }
+
+        fun deleteAllNotes() {
+            transaction {
+                SchemaUtils.drop(Notes)
+            }
+        }
+
+        fun deleteLastUpdated() {
+            transaction {
+                SchemaUtils.drop(LastUpdated)
+            }
+        }
+
+        fun deleteAll() {
+            deleteAllNotes()
+            deleteLastUpdated()
+        }
+
+        fun getLastUpdate(): String {
+            var lastUpdate: String = ""
+
+            transaction {
+                SchemaUtils.create(DatabaseOperations.LastUpdated)
+                LastUpdated.select { LastUpdated.id eq "1" }.forEach {
+                    lastUpdate = it[LastUpdated.lastUpdate]
+                }
+            }
+            return lastUpdate
+        }
+
+        fun updateLastUpdate(time: String = LocalDateTime.now().toString()) {
+            transaction {
+                deleteLastUpdated()
+                SchemaUtils.create(DatabaseOperations.LastUpdated)
+                LastUpdated.insert {
+                    it[LastUpdated.id] = "1"
+                    it[LastUpdated.lastUpdate] = time
+                }
+            }
+        }
+
+        fun sync(): Boolean {
+            try {
+                val remoteLastUpdate = HttpOperations.lastUpdate()
+                val localLastUpdate = getLastUpdate()
+
+                if (localLastUpdate > remoteLastUpdate) {
+                    HttpOperations.sync(DatabaseOperations.getAllNotes(), getLastUpdate())
+                } else if (localLastUpdate < remoteLastUpdate) {
+                    deleteAllNotes()
+                    for (note in HttpOperations.getAllNotes()) {
+                        addNote(note)
+                    }
+                    updateLastUpdate(HttpOperations.lastUpdate())
+                }
+                return true
+            } catch (e: ConnectException) {
+                println(e.message)
+                return false
+            }
+        }
     }
-
-
-//object Folder : IntIdTable() {
-//    val folderName = varchar("folderName", 100).nullable()
-//    val notes = arrayOf(Notes.id)
-//    val dateCreated = varchar("dateCreated", 30)
-//    val lastUpdated = varchar("lastUpdated", 30)
-//}
 }
