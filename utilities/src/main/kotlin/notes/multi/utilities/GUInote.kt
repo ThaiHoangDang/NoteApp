@@ -46,7 +46,15 @@ class GUInote {
     }
 
     fun update() {
-
+        val noteslist = DatabaseOperations.getAllNotes()
+        for (i in notescenes) {
+            for (j in noteslist) {
+                if (i.file().id == j.id) {
+                    i.rettextarea().htmlText = j.text.toString()
+                    i.retstage().title = j.title
+                }
+            }
+        }
     }
 
 }
