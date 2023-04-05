@@ -32,6 +32,10 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         return stage
     }
 
+    fun rettextarea() : HTMLEditor {
+        return textarea
+    }
+
 
     init {
         lists.addstage(this)
@@ -278,26 +282,34 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         }
 
         sync.setOnAction {
-            val warning = Alert(Alert.AlertType.CONFIRMATION)
-            warning.title = "SYNC"
-            warning.contentText = "After synchronization, your current work may be lost. Are you sure sync?"
-            val result = warning.showAndWait()
-            if (result.isPresent) {
-                when (result.get()) {
-                    ButtonType.OK -> {
-                        if (DatabaseOperations.sync()) {
-                            val success = Alert(Alert.AlertType.INFORMATION)
-                            success.title = "SUCCESS"
-                            success.contentText = "Sync success!"
-                            success.showAndWait()
-                        } else {
-                            val warning = Alert(Alert.AlertType.ERROR)
-                            warning.title = "ERROR"
-                            warning.contentText = "Sync failed due to no internet."
-                            warning.showAndWait()
+            if (!lists.isbrowseropened()) {
+                val warning = Alert(Alert.AlertType.CONFIRMATION)
+                warning.title = "SYNC"
+                warning.contentText = "After synchronization, your current work may be lost. Are you sure sync?"
+                val result = warning.showAndWait()
+                if (result.isPresent) {
+                    when (result.get()) {
+                        ButtonType.OK -> {
+                            if (DatabaseOperations.sync()) {
+                                val success = Alert(Alert.AlertType.INFORMATION)
+                                success.title = "SUCCESS"
+                                success.contentText = "Sync success!"
+                                lists.update()
+                                success.showAndWait()
+                            } else {
+                                val warning = Alert(Alert.AlertType.ERROR)
+                                warning.title = "ERROR"
+                                warning.contentText = "Sync failed due to no internet."
+                                warning.showAndWait()
+                            }
                         }
                     }
                 }
+            } else {
+                val warning = Alert(Alert.AlertType.ERROR)
+                warning.title = "ERROR"
+                warning.contentText = "The file browser is opened elsewhere"
+                warning.showAndWait()
             }
         }
 
