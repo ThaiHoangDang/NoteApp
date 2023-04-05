@@ -285,10 +285,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             if (result.isPresent) {
                 when (result.get()) {
                     ButtonType.OK -> {
-                        try {
-                            //TODO: WRITE SYNC DB LOGIC
-                            throw Exception()
-                        } catch(e:Exception) {
+                        if (DatabaseOperations.sync()) {
+                            val success = Alert(Alert.AlertType.INFORMATION)
+                            success.title = "SUCCESS"
+                            success.contentText = "Sync success!"
+                            success.showAndWait()
+                        } else {
                             val warning = Alert(Alert.AlertType.ERROR)
                             warning.title = "ERROR"
                             warning.contentText = "Sync failed due to no internet."

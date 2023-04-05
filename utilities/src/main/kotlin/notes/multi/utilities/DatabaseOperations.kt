@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.ConnectException
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class DatabaseOperations() {
     object Notes : Table() {
@@ -25,6 +26,7 @@ class DatabaseOperations() {
     }
 
     companion object CRUD {
+        val zone: ZoneId = ZoneId.of("GMT")
         fun addNote(note: Note) {
             transaction {
                 SchemaUtils.create(DatabaseOperations.Notes)
@@ -158,7 +160,7 @@ class DatabaseOperations() {
             return lastUpdate
         }
 
-        fun updateLastUpdate(time: String = LocalDateTime.now().toString()) {
+        fun updateLastUpdate(time: String = LocalDateTime.now(zone).toString()) {
             transaction {
                 deleteLastUpdated()
                 SchemaUtils.create(DatabaseOperations.LastUpdated)
