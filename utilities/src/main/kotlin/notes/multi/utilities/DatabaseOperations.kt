@@ -191,5 +191,34 @@ class DatabaseOperations() {
                 return false
             }
         }
+
+        fun remotefetch(note: Note) {
+            addUpdateNote(note)
+        }
+
+        fun localfetch(note: Note) {
+            val ret = HttpOperations.get(note.id)
+            if (ret.id != "NOT_FOUND") {
+                addUpdateNote(note)
+            }
+        }
+
+        // Delete from remote
+// You can just pass note ID
+// String return value is not useful, don't worry about it
+        fun deleteRemote(noteId: String) {
+            HttpOperations.delete(noteId)
+        }
+
+        // Delete from local
+        fun deleteLocal(note: Note) {
+            DatabaseOperations.deleteNote(note)
+        }
+
+        // Get all notes from remote
+        fun getAllServerNotes(): MutableList<Note> {
+            return HttpOperations.getAllNotes()
+        }
+
     }
 }

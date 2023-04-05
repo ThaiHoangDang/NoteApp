@@ -120,5 +120,39 @@ class HttpOperations {
 
             return response.body()
         }
+
+        fun addUpdateNote(note: Note): Boolean {
+            var locexist = false
+            val localnotes = DatabaseOperations.getAllNotes()
+            for (i in localnotes) {
+                if (i.id == note.id) {
+                    locexist = true
+                    break
+                }
+            }
+
+            if (locexist) {
+
+                var exist = false
+
+                val notesList: MutableList<Note> = getAllNotes()
+
+                for (remoteNote in notesList) {
+                    if (note.id == remoteNote.id) {
+                        exist = true;
+                        break;
+                    }
+                }
+
+                if (exist) {
+                    put(note)
+                } else {
+                    post(note)
+                }
+                return true
+            } else {
+                return false
+            }
+        }
     }
 }
