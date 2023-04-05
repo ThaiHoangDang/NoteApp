@@ -70,11 +70,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         val menubar = MenuBar()
         val filemenu = Menu("File")
         val modechange = Menu("Mode")
-        val option = Menu("Option")
+        val sync = Menu("Sync")
 
         // File menu items
         val new = MenuItem("New")
-        val open = MenuItem("Open")
+        val open = MenuItem("OpenLocal")
+        val openserver = MenuItem("OpenServer")
         val save = MenuItem("Save")
         val rename = MenuItem("Rename")
         val delete = MenuItem("Delete")
@@ -84,7 +85,8 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         val light = MenuItem("Light")
 
         // option menu items
-        val sync = MenuItem("Sync")
+        val update = MenuItem("update")
+        val fetch = MenuItem("fetch")
 
         new.setOnAction {
             val newwindow = Stage()
@@ -93,28 +95,52 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
 
 
         open.setOnAction {
-            lists.setbrowseropened(true)
-            val browser = Stage()
-            browser.initModality(Modality.WINDOW_MODAL)
-            browser.initOwner(stage)
-            //lists.setowner(browser)
-            val noteslist = DatabaseOperations.getAllNotes()
-            val obsfs = FXCollections.observableArrayList<Note>()
-            obsfs.addAll(noteslist)
-            val titlecolumn = TableColumn<Note, String>("title")
-            titlecolumn.setCellValueFactory { it-> it.value.titleGUI}
-            val datecolumn = TableColumn<Note, String>("date modified")
-            datecolumn.setCellValueFactory { it->it.value.lastModifiedGUI }
-            val notesview = TableView<Note>()
-            notesview.items = obsfs
-            notesview.columns.addAll(titlecolumn, datecolumn)
-            notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+            if (!lists.isbrowseropened()) {
+                lists.setbrowseropened(true)
+                val browser = Stage()
+                browser.initModality(Modality.WINDOW_MODAL)
+                browser.initOwner(stage)
+                //lists.setowner(browser)
+                val noteslist = DatabaseOperations.getAllNotes()
+                val obsfs = FXCollections.observableArrayList<Note>()
+                obsfs.addAll(noteslist)
+                val titlecolumn = TableColumn<Note, String>("title")
+                titlecolumn.setCellValueFactory { it -> it.value.titleGUI }
+                val datecolumn = TableColumn<Note, String>("date modified")
+                datecolumn.setCellValueFactory { it -> it.value.lastModifiedGUI }
+                val notesview = TableView<Note>()
+                notesview.items = obsfs
+                notesview.columns.addAll(titlecolumn, datecolumn)
+                notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
 
 
-            notesview.setOnMouseClicked { event->
-                val index = notesview.selectionModel.selectedIndex
-                if (index != -1) {
-                    if (event.clickCount == 2) {
+                notesview.setOnMouseClicked { event ->
+                    val index = notesview.selectionModel.selectedIndex
+                    if (index != -1) {
+                        if (event.clickCount == 2) {
+                            if (lists.findopened(obsfs[index].id)) {
+                                browser.close()
+                                lists.focusstage(obsfs[index].id)
+                            } else {
+                                val tempnote = DatabaseOperations.getNote(obsfs[index].id)
+                                textarea.htmlText = tempnote.text.toString()
+                                stage.title = tempnote.title
+                                browser.close()
+                                curfile = tempnote
+                                newname = false
+                                lists.addnotes(tempnote.id)
+                            }
+                            lists.setbrowseropened(false)
+                        }
+                    }
+                }
+
+                val delete = Button("Delete")
+                val open = Button("Open")
+
+                open.setOnAction {
+                    val index = notesview.selectionModel.selectedIndex
+                    if (index != -1) {
                         if (lists.findopened(obsfs[index].id)) {
                             browser.close()
                             lists.focusstage(obsfs[index].id)
@@ -130,40 +156,102 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                         lists.setbrowseropened(false)
                     }
                 }
-            }
 
-            val delete = Button("Delete")
-            val open = Button("Open")
-
-            open.setOnAction {
-                val index = notesview.selectionModel.selectedIndex
-                if (index != -1) {
-                    if (lists.findopened(obsfs[index].id)) {
-                        browser.close()
-                        lists.focusstage(obsfs[index].id)
-                    } else {
+                delete.setOnAction {
+                    val index = notesview.selectionModel.selectedIndex
+                    if (index != -1) {
                         val tempnote = DatabaseOperations.getNote(obsfs[index].id)
-                        textarea.htmlText = tempnote.text.toString()
-                        stage.title = tempnote.title
-                        browser.close()
-                        curfile = tempnote
-                        newname = false
-                        lists.addnotes(tempnote.id)
+                        if (lists.findopened(obsfs[index].id)) {
+                            val warning = Alert(Alert.AlertType.ERROR)
+                            warning.title = "ERROR"
+                            warning.contentText = "This file is opened in program"
+                            warning.showAndWait()
+                        } else {
+                            val warningdel = Alert(Alert.AlertType.CONFIRMATION)
+                            warningdel.title = "DELETE"
+                            warningdel.contentText = "Do you delete this file?"
+                            val result = warningdel.showAndWait()
+                            if (result.isPresent) {
+                                when (result.get()) {
+                                    ButtonType.OK -> {
+                                        DatabaseOperations.deleteNote(tempnote)
+                                        obsfs.removeAt(index)
+                                    }
+                                }
+                            }
+                        }
                     }
+                }
+
+                val buttoncontainer = HBox(10.0, open, delete)
+
+                val generalcontainer = VBox(notesview, buttoncontainer)
+                VBox.setVgrow(notesview, Priority.ALWAYS)
+                browser.scene = Scene(generalcontainer)
+
+                browser.show()
+
+                browser.setOnCloseRequest {
                     lists.setbrowseropened(false)
                 }
+            } else {
+                val warning = Alert(Alert.AlertType.ERROR)
+                warning.title = "ERROR"
+                warning.contentText = "The file browser is opened elsewhere"
+                warning.showAndWait()
             }
+        }
 
-            delete.setOnAction {
-                val index = notesview.selectionModel.selectedIndex
-                if (index != -1) {
-                    val tempnote = DatabaseOperations.getNote(obsfs[index].id)
-                    if (lists.findopened(obsfs[index].id)) {
-                        val warning = Alert(Alert.AlertType.ERROR)
-                        warning.title = "ERROR"
-                        warning.contentText = "This file is opened in program"
-                        warning.showAndWait()
-                    } else {
+        openserver.setOnAction {
+            if (!lists.isbrowseropened()) {
+                lists.setbrowseropened(true)
+                val browser = Stage()
+                browser.initModality(Modality.WINDOW_MODAL)
+                browser.initOwner(stage)
+                //lists.setowner(browser)
+                var noteslist = mutableListOf<Note>()
+                try {
+                    noteslist = DatabaseOperations.getAllServerNotes()
+                } catch (e: Exception) {
+                    val interneterror = Alert(Alert.AlertType.ERROR)
+                    interneterror.title = "ERROR: NO INTERNET"
+                    interneterror.contentText = "There is no internet to connect server"
+                    interneterror.showAndWait()
+                    browser.close()
+                    lists.setbrowseropened(false)
+                }
+                val obsfs = FXCollections.observableArrayList<Note>()
+                obsfs.addAll(noteslist)
+                val titlecolumn = TableColumn<Note, String>("title")
+                titlecolumn.setCellValueFactory { it -> it.value.titleGUI }
+                val datecolumn = TableColumn<Note, String>("date modified")
+                datecolumn.setCellValueFactory { it -> it.value.lastModifiedGUI }
+                val notesview = TableView<Note>()
+                notesview.items = obsfs
+                notesview.columns.addAll(titlecolumn, datecolumn)
+                notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+
+
+                val delete = Button("Delete")
+                val fetch = Button("Fetch")
+
+                fetch.setOnAction {
+                    val index = notesview.selectionModel.selectedIndex
+                    if (index != -1) {
+                        DatabaseOperations.remotefetch(obsfs[index])
+                        lists.update()
+                    }
+                    val success = Alert(Alert.AlertType.INFORMATION)
+                    success.title = "SUCCESS"
+                    success.contentText = "Succesfully Fetched"
+                    lists.update()
+                    success.showAndWait()
+                }
+
+                delete.setOnAction {
+                    val index = notesview.selectionModel.selectedIndex
+                    if (index != -1) {
+                        val tempnote = obsfs[index]
                         val warningdel = Alert(Alert.AlertType.CONFIRMATION)
                         warningdel.title = "DELETE"
                         warningdel.contentText = "Do you delete this file?"
@@ -171,25 +259,30 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                         if (result.isPresent) {
                             when (result.get()) {
                                 ButtonType.OK -> {
-                                    DatabaseOperations.deleteNote(tempnote)
+                                    DatabaseOperations.deleteRemote(tempnote.id)
                                     obsfs.removeAt(index)
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            val buttoncontainer = HBox(10.0, open, delete)
+                val buttoncontainer = HBox(10.0, fetch, delete)
 
-            val generalcontainer = VBox(notesview, buttoncontainer)
-            VBox.setVgrow(notesview, Priority.ALWAYS)
-            browser.scene = Scene(generalcontainer)
+                val generalcontainer = VBox(notesview, buttoncontainer)
+                VBox.setVgrow(notesview, Priority.ALWAYS)
+                browser.scene = Scene(generalcontainer)
 
-            browser.show()
+                browser.show()
 
-            browser.setOnCloseRequest {
-                lists.setbrowseropened(false)
+                browser.setOnCloseRequest {
+                    lists.setbrowseropened(false)
+                }
+            } else {
+                val warning = Alert(Alert.AlertType.ERROR)
+                warning.title = "ERROR"
+                warning.contentText = "The file browser is opened elsewhere"
+                warning.showAndWait()
             }
         }
 
@@ -281,26 +374,28 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             }
         }
 
-        sync.setOnAction {
+        update.setOnAction {
             if (!lists.isbrowseropened()) {
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
-                warning.title = "SYNC"
-                warning.contentText = "After synchronization, your current work may be lost. Are you sure sync?"
+                warning.title = "UPDATE"
+                warning.contentText = "Do you want to update the file to server?"
                 val result = warning.showAndWait()
                 if (result.isPresent) {
                     when (result.get()) {
                         ButtonType.OK -> {
-                            if (DatabaseOperations.sync()) {
-                                val success = Alert(Alert.AlertType.INFORMATION)
-                                success.title = "SUCCESS"
-                                success.contentText = "Sync success!"
-                                lists.update()
-                                success.showAndWait()
-                            } else {
-                                val warning = Alert(Alert.AlertType.ERROR)
-                                warning.title = "ERROR"
-                                warning.contentText = "Sync failed due to no internet."
-                                warning.showAndWait()
+                            try {
+                                val success = HttpOperations.addUpdateNote(curfile)
+                                if (!success) {
+                                    val warning = Alert(Alert.AlertType.ERROR)
+                                    warning.title = "ERROR"
+                                    warning.contentText = "Please save file locally before you upload."
+                                    warning.showAndWait()
+                                }
+                            } catch (e: Exception) {
+                                val interneterror = Alert(Alert.AlertType.ERROR)
+                                interneterror.title = "ERROR: NO INTERNET"
+                                interneterror.contentText = "There is no internet to connect server"
+                                interneterror.showAndWait()
                             }
                         }
                     }
@@ -313,10 +408,39 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             }
         }
 
-        filemenu.items.addAll(new, open, save, rename, delete)
+        fetch.setOnAction {
+            if (!lists.isbrowseropened()) {
+                val warning = Alert(Alert.AlertType.CONFIRMATION)
+                warning.title = "FETCH"
+                warning.contentText = "Any unuploaded changes will be lost. Are you sure fetch?"
+                val result = warning.showAndWait()
+                if (result.isPresent) {
+                    when (result.get()) {
+                        ButtonType.OK -> {
+                            try {
+                                DatabaseOperations.localfetch(curfile)
+                                lists.update()
+                            } catch (e: Exception) {
+                                val interneterror = Alert(Alert.AlertType.ERROR)
+                                interneterror.title = "ERROR: NO INTERNET"
+                                interneterror.contentText = "There is no internet to connect server"
+                                interneterror.showAndWait()
+                            }
+                        }
+                    }
+                }
+            } else {
+                val warning = Alert(Alert.AlertType.ERROR)
+                warning.title = "ERROR"
+                warning.contentText = "The file browser is opened elsewhere"
+                warning.showAndWait()
+            }
+        }
+
+        filemenu.items.addAll(new, open, openserver ,save, rename, delete)
         modechange.items.addAll(dark, light)
-        option.items.addAll(sync)
-        menubar.menus.addAll(filemenu, modechange, option)
+        sync.items.addAll(update, fetch)
+        menubar.menus.addAll(filemenu, modechange, sync)
 
         val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)
