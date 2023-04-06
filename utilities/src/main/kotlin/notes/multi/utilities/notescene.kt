@@ -122,6 +122,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                                 browser.close()
                                 lists.focusstage(obsfs[index].id)
                             } else {
+                                lists.removenote(curfile.id)
                                 val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                                 textarea.htmlText = tempnote.text.toString()
                                 stage.title = tempnote.title
@@ -145,6 +146,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                             browser.close()
                             lists.focusstage(obsfs[index].id)
                         } else {
+                            lists.removenote(curfile.id)
                             val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                             textarea.htmlText = tempnote.text.toString()
                             stage.title = tempnote.title
