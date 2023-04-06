@@ -123,34 +123,6 @@ class TextWindow(): Application() {
             notesview.columns.addAll(titlecolumn, datecolumn)
             notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
 
-//            if (isDarkMode) {
-
-//                notesview.style = "-fx-background-color: black;" // set background color of tableview
-//                notesview.lookupAll(".column-header-background").forEach {
-//                    it.style = "-fx-background-color: black;" // set background color of all columns
-//                }
-
-
-
-//                notesview.style = """
-//                    .table-row-cell {
-//                    -fx-background-color: black;
-//                    -fx-background-insets: 0, 0 0 1 0;
-//                    -fx-padding: 0.0em;
-//                    }
-//                """
-
-
-//            }else{
-//                notesview.style = "-fx-background-color: white;" // set background color of tableview
-//                notesview.lookupAll(".column-header-background").forEach {
-//                    it.style = "-fx-background-color: white;" // set background color of all columns
-//                }
-//
-//                notesview.lookupAll(".table-column-cell .table-cell").forEach {
-//                    it.style = "-fx-background-color: white;" // set background color of all cells
-//                }
-//            }
 
 
             notesview.setOnMouseClicked { event->
@@ -159,6 +131,11 @@ class TextWindow(): Application() {
                     if (event.clickCount == 2) {
                         val tempnote = DatabaseOperations.getNote(noteslist[index].id)
                         textarea.htmlText = tempnote.text.toString()
+                        if(isDarkMode){
+                            //textarea.stylesheets.add("newFile.css")
+                            toggleDarkMode(stage.scene, textarea, isDarkMode)
+                        }
+
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
