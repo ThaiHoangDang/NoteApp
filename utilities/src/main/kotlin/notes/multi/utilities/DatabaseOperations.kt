@@ -199,7 +199,7 @@ class DatabaseOperations() {
         fun localfetch(note: Note) {
             val ret = HttpOperations.get(note.id)
             if (ret.id != "NOT_FOUND") {
-                addUpdateNote(note)
+                addUpdateNote(ret)
             }
         }
 
