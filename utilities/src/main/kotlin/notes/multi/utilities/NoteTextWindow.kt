@@ -13,10 +13,13 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.web.HTMLEditor
+import javafx.scene.web.WebView
+import javafx.stage.FileChooser
 import javafx.stage.Modality
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.w3c.dom.html.HTMLElement
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -263,7 +266,44 @@ class TextWindow(): Application() {
         modechange.items.addAll(dark, light)
         menubar.menus.addAll(filemenu, modechange)
 
-        val box = VBox(menubar, anchor)
+        //adding images to the textarea
+        val selectImageButton = Button("Select Image")
+
+        selectImageButton.setOnAction {
+            val filechooser = FileChooser()
+            filechooser.title = "Select Image"
+            filechooser.extensionFilters.addAll(
+                    FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
+            )
+            val selectedImage = filechooser.showOpenDialog(null)
+            if (selectedImage != null) {
+                val imagePath = selectedImage.toURI().toString()
+                val imageHTML = "<img id=\'12345\' src=\'$imagePath\' style=\'width: 100%; position= relative\'>"
+                textarea.htmlText += imageHTML
+            }
+        }
+
+        //val image = textarea.lookup("#12345") as? WebView
+        //var startX = 0.0
+        //var startY = 0.0
+        //var startWidth = 0.0
+        //var startHeight = 0.0
+        //var isResizing = false
+
+        //image?.let { webView ->
+        //    val webEngine = webView.engine
+
+        //    webEngine.loadContent(textarea.htmlText)
+
+        //    val document = webEngine.document
+        //    val img = document.getElementById("12345")
+
+        //    img?.let { element ->
+        //        (element as HTMLElement).
+        //    }
+        //}
+
+        val box = VBox(menubar, anchor, selectImageButton)
         VBox.setVgrow(anchor, Priority.ALWAYS)
 
         stage.scene = Scene(box, 300.0, 300.0)
