@@ -273,7 +273,7 @@ class TextWindow(): Application() {
             val filechooser = FileChooser()
             filechooser.title = "Select Image"
             filechooser.extensionFilters.addAll(
-                    FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
+                    FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif", "*.jpeg")
             )
             val selectedImage = filechooser.showOpenDialog(null)
             if (selectedImage != null) {
