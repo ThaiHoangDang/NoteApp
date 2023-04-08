@@ -18,8 +18,5 @@ import notes.multi.utilities.TextWindow
 
 fun main() {
     Database.connect("jdbc:sqlite:test.db")
-    val testnote = Note()
-    testnote.title = "SPECIALLLL"
-    DatabaseOperations.addUpdateNote(testnote)
     Application.launch(TextWindow()::class.java)
 }
