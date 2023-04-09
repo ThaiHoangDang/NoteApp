@@ -35,6 +35,18 @@ fun toggleDarkMode(scene: Scene, editor: HTMLEditor, isDarkMode: Boolean) {
     //isDarkMode = !isDarkMode
 }
 
+fun addNewDarkMode(scene: Scene, editor: HTMLEditor) {
+        editor.htmlText = "<body style='background-color: #black;'" + editor.htmlText
+        editor.style = "-fx-background-color: #black;"
+        scene.stylesheets.add("newFile.css")
+
+}
+
+fun removeDarkMode(scene: Scene, editor: HTMLEditor){
+    editor.style = "-fx-background-color: white;"
+    editor.htmlText = "<body style='background-color: white;'" + editor.htmlText
+    scene.stylesheets.remove("newFile.css")
+}
 fun addDarkModeBrowser(scene: Scene) {
         scene.stylesheets.add("darkthemeBrowser.css")
     //isDarkMode = !isDarkMode

@@ -11,8 +11,9 @@
 }
 
 #textarea .html-editor .web-view {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: black;
 }
+
 
 .html-editor-foreground, .html-editor-background {
     -fx-color-label-visible: true;

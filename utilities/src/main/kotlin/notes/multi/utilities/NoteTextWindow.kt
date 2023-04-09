@@ -131,17 +131,21 @@ class TextWindow(): Application() {
                     if (event.clickCount == 2) {
                         val tempnote = DatabaseOperations.getNote(noteslist[index].id)
                         textarea.htmlText = tempnote.text.toString()
+
                         if(isDarkMode){
                             //textarea.stylesheets.add("newFile.css")
                             toggleDarkMode(stage.scene, textarea, isDarkMode)
+                            isDarkMode = !isDarkMode
                         }
-
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
+
+
                     }
                 }
             }
+
 
             val delete = Button("Delete")
             val open = Button("Open")
@@ -151,9 +155,14 @@ class TextWindow(): Application() {
                 if (index != -1) {
                         val tempnote = DatabaseOperations.getNote(noteslist[index].id)
                         textarea.htmlText = tempnote.text.toString()
+                    if(isDarkMode){
+                        toggleDarkMode(stage.scene, textarea, isDarkMode)
+                        isDarkMode = !isDarkMode
+                    }
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
+
                 }
             }
 

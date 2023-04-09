@@ -7,7 +7,6 @@ dialog-pane {
     -fx-text-background-color: #827e7e;
 }
 
-
 .dialog-pane:header .header-panel {
     /*-fx-padding: 0.833em 1.166em 0.833em 1.166em; *//* 10px 14px 10px 14px */
     -fx-padding: 0.833em; /* 10px */
