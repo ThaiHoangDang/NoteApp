@@ -39,7 +39,7 @@ class GUInote {
         for (i in notescenes) {
             if (i.file().id == noteid) {
                 i.retstage().requestFocus()
-                println(i.retstage().isFocused)
+                // println(i.retstage().isFocused)
                 i.retstage().toFront()
             }
         }
