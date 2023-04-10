@@ -5,10 +5,7 @@ import javafx.collections.FXCollections
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.web.HTMLEditor
 import javafx.stage.FileChooser
 import javafx.stage.Modality
@@ -26,7 +23,7 @@ import java.util.*
 // http://localhost:8080/images/
 const val IMAGE_MICROSERVICE = "http://18.117.170.43:8080/notes-app-images/images/"
 
-class notescene(private val stage: Stage, private val lists:GUInote, private val id:Int) {
+class notescene(private val stage: Stage, private val lists:GUInote, private val id: String = "-1") {
     /**
      * Boolean value denoting whether console has been pressed
      */
@@ -51,13 +48,22 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
 
 
     init {
+
+
+        if (id != "-1") {
+            curfile = DatabaseOperations.getNote(id)
+            textarea.htmlText = curfile.text.toString()
+            newname = false
+        }
+
         lists.addstage(this)
 
         stage.setOnCloseRequest {
             lists.removenote(curfile.id)
             lists.removestage(this)
         }
-        stage.title = "Untitled"
+        stage.title = if (id != "-1") curfile.title else "Untitled"
+
         val scroll = ScrollPane()
         val anchor = AnchorPane(textarea)
 
@@ -88,8 +94,8 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
 
         // File menu items
         val new = MenuItem("New")
-        val open = MenuItem("OpenLocal")
-        val openserver = MenuItem("OpenServer")
+        val open = MenuItem("Local Notes")
+        val openserver = MenuItem("Remote Notes")
         val save = MenuItem("Save")
         val rename = MenuItem("Rename")
         val delete = MenuItem("Delete")
@@ -102,12 +108,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         val light = MenuItem("Light")
 
         // option menu items
-        val update = MenuItem("update")
-        val fetch = MenuItem("fetch")
+        val update = MenuItem("Update Remote")
+        val fetch = MenuItem("Fetch Remote")
 
         new.setOnAction {
             val newwindow = Stage()
-            notescene(newwindow, lists, id+1)
+            notescene(newwindow, lists, "-1")
         }
 
 
@@ -577,8 +583,9 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     when (result.get()) {
                         ButtonType.OK -> {
                             try {
-                                DatabaseOperations.localfetch(curfile)
-                                lists.update()
+                                if(DatabaseOperations.localfetch(curfile)) {
+                                    lists.update()
+                                }
                             } catch (e: Exception) {
                                 val interneterror = Alert(Alert.AlertType.ERROR)
                                 interneterror.title = "ERROR: NO INTERNET"
@@ -819,8 +826,8 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             if (controlPressed) {controlPressed = false}
         }
 
-
-
+        val wv = textarea.lookup("WebView")
+        GridPane.setVgrow(wv, Priority.ALWAYS)
 
         stage.show()
     }

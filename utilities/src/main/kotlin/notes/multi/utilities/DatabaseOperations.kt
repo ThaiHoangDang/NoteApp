@@ -196,11 +196,13 @@ class DatabaseOperations() {
             addUpdateNote(note)
         }
 
-        fun localfetch(note: Note) {
+        fun localfetch(note: Note): Boolean {
             val ret = HttpOperations.get(note.id)
             if (ret.id != "NOT_FOUND") {
                 addUpdateNote(ret)
+                return true
             }
+            return false
         }
 
         // Delete from remote
