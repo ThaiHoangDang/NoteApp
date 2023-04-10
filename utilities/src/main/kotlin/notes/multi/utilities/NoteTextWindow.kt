@@ -107,6 +107,7 @@ class TextWindow(): Application() {
 
         val menubar = MenuBar()
         val filemenu = Menu("File")
+        val insertmenu = Menu("Insert")
         val modechange = Menu("Mode")
 
         // File menu items
@@ -114,6 +115,9 @@ class TextWindow(): Application() {
         val save = MenuItem("Save")
         val rename = MenuItem("Rename")
         val delete = MenuItem("Delete")
+
+        //Insert menu items
+        val insertimage = MenuItem("Insert Image")
 
         // Modechange menu items
         val dark = MenuItem("Dark")
@@ -296,14 +300,14 @@ class TextWindow(): Application() {
 
 
         filemenu.items.addAll(open, save, delete)
-
+        insertmenu.items.addAll(insertimage)
         modechange.items.addAll(dark, light)
-        menubar.menus.addAll(filemenu, modechange)
+        menubar.menus.addAll(filemenu, insertmenu, modechange)
 
         //adding images to the textarea
-        val selectImageButton = Button("Select Image")
+        //val selectImageButton = Button("Select Image")
 
-        selectImageButton.setOnAction {
+        insertimage.setOnAction {
             val filechooser = FileChooser()
             filechooser.title = "Select Image"
             filechooser.extensionFilters.addAll(
@@ -351,7 +355,7 @@ class TextWindow(): Application() {
         //    }
         //}
 
-        val box = VBox(menubar, anchor, selectImageButton)
+        val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)
 
         stage.scene = Scene(box, 300.0, 300.0)
