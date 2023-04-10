@@ -1,5 +1,6 @@
 package notes.multi.utilities
 
+import com.beust.klaxon.Klaxon
 import javafx.application.Application
 import javafx.stage.Stage
 import javafx.scene.Scene
@@ -46,11 +47,7 @@ class TextWindow(): Application() {
 
     override fun start(stage: Stage) {
         val noteslist = GUInote()
-        val newwindow = notescene(stage, noteslist,0 )
-        if (paramsMap.isNotEmpty()) {
-            newwindow.settitle(paramsMap["title"]!!)
-            newwindow.settext(paramsMap["text"]!!)
-            newwindow.setnewname(false)
-        }
+        val noteId = if (paramsMap.containsKey("note")) paramsMap["note"]!! else "-1"
+        val newwindow = notescene(stage, noteslist, noteId)
     }
 }

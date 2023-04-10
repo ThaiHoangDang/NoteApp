@@ -31,6 +31,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.40.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.40.1")
     implementation ("com.beust:klaxon:5.5")
+    implementation ('com.squareup.okhttp3:okhttp:4.10.0')
+
 }
 
 test {
