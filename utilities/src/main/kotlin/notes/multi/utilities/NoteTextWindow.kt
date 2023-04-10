@@ -1,28 +1,32 @@
 package notes.multi.utilities
 
+import com.beust.klaxon.JsonObject
 import javafx.application.Application
-import javafx.stage.Stage
-import javafx.scene.Scene
-import javafx.scene.layout.VBox
-import javafx.scene.layout.AnchorPane
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.web.HTMLEditor
-import javafx.scene.web.WebView
 import javafx.stage.FileChooser
 import javafx.stage.Modality
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.w3c.dom.html.HTMLElement
-import java.time.LocalDate
+import javafx.stage.Stage
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.time.LocalDateTime
 import java.util.*
+
+// http://18.117.170.43:8080/notes-app-images/images/
+// http://localhost:8080/images/
+const val IMAGE_MICROSERVICE = "http://18.117.170.43:8080/notes-app-images/images/"
 
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
@@ -308,8 +312,22 @@ class TextWindow(): Application() {
             val selectedImage = filechooser.showOpenDialog(null)
             if (selectedImage != null) {
                 val imagePath = selectedImage.toURI().toString()
-                val imageHTML = "<img id=\'12345\' src=\'$imagePath\' style=\'width: 100%; position= relative\'>"
-                textarea.htmlText += imageHTML
+                try {
+                    val responseIdx = sendImageToMicroservice(selectedImage)
+                    if (responseIdx == -1) { throw ErrorInUploadingFile("There was an error in uploading the file!")}
+                    val imageHTML = "<img src=${IMAGE_MICROSERVICE}${responseIdx} style=\'width: 100%;\'>"
+                    textarea.htmlText += imageHTML
+                } catch (e: IllegalFileTypeUpload) {
+                    var warning = Alert(Alert.AlertType.ERROR)
+                    warning.title = "Illegal file type"
+                    warning.contentText = e.message
+                    warning.showAndWait()
+                } catch (e: ErrorInUploadingFile) {
+                    var warning = Alert(Alert.AlertType.ERROR)
+                    warning.title = "Error in file upload"
+                    warning.contentText = e.message
+                    warning.showAndWait()
+                }
             }
         }
 
@@ -452,5 +470,46 @@ class TextWindow(): Application() {
 
 
         stage.show()
+    }
+
+    class IllegalFileTypeUpload (msg: String) : Exception(msg)
+    class ErrorInUploadingFile (msg: String) : Exception(msg)
+    private fun sendImageToMicroservice(selectedImage: File): Int {
+        val imgFile = File(selectedImage.toURI())
+
+        val contentType = when (imgFile.extension.lowercase(Locale.getDefault())) {
+            "jpeg", "jpg" -> "image/jpeg".toMediaTypeOrNull()
+            "png" -> "image/png".toMediaTypeOrNull()
+            "gif" -> "image/gif".toMediaTypeOrNull()
+            else -> throw IllegalFileTypeUpload("Only .jpeg, .jpg, .png, and .gif file formats are accepted!")
+        }
+
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM).addFormDataPart(
+                "image", imgFile.name,
+                imgFile.asRequestBody(contentType)
+            ).build()
+
+        val request = Request.Builder()
+            .url(IMAGE_MICROSERVICE)
+            .post(requestBody)
+            .build()
+
+        val res = OkHttpClient().newCall(request).execute()
+        var insertionIndex = -1
+        if (!res.isSuccessful) {
+            var warning = Alert(Alert.AlertType.ERROR)
+            warning.title = "Image upload failed"
+            warning.contentText = "Failed to add image to database. Response Code: ${res.code}."
+            warning.showAndWait()
+            return -1
+        }
+
+        if (res.body != null) {
+            insertionIndex= res.body!!.string().toInt()
+        }
+        res.body?.close()
+
+        return insertionIndex
     }
 }
