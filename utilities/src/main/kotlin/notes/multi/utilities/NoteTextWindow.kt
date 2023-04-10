@@ -1,3 +1,8 @@
+/**
+ * Unless explicitly stated otherwise all files in this repository are licensed under the MIT License
+ * Copyright (c) 2023 Abhay Menon, Inseo Kim, Hoang Dang, Guransh Khurana, Anshul Ruhil
+ */
+
 package notes.multi.utilities
 
 import com.beust.klaxon.Klaxon
