@@ -28,6 +28,7 @@ import java.util.*
 // http://localhost:8080/images/
 const val IMAGE_MICROSERVICE = "http://18.117.170.43:8080/notes-app-images/images/"
 
+
 /**
  * - Displays a responsive `TextArea` in a window with the text of the file passed to the `Application.launch` function
  * - Parameters are passed through the second parameter of the `Application.launch` in this format:
@@ -141,12 +142,19 @@ class TextWindow(): Application() {
             notesview.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
 
 
+
             notesview.setOnMouseClicked { event->
                 val index = notesview.selectionModel.selectedIndex
                 if (index != -1) {
                     if (event.clickCount == 2) {
                         val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                         textarea.htmlText = tempnote.text.toString()
+
+                        if(isDarkMode){
+                            //textarea.stylesheets.add("newFile.css")
+                            toggleDarkMode(stage.scene, textarea, isDarkMode)
+                            isDarkMode = !isDarkMode
+                        }
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
@@ -154,6 +162,7 @@ class TextWindow(): Application() {
                     }
                 }
             }
+
 
             val delete = Button("Delete")
             val open = Button("Open")
@@ -163,6 +172,10 @@ class TextWindow(): Application() {
                 if (index != -1) {
                         val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                         textarea.htmlText = tempnote.text.toString()
+                    if(isDarkMode){
+                        toggleDarkMode(stage.scene, textarea, isDarkMode)
+                        isDarkMode = !isDarkMode
+                    }
                         stage.title = tempnote.title
                         browser.close()
                         curfile = tempnote
@@ -176,13 +189,27 @@ class TextWindow(): Application() {
                     val tempnote = DatabaseOperations.getNote(obsfs[index].id)
                     if (curfile.id == tempnote.id) {
                         val warning = Alert(Alert.AlertType.ERROR)
+                        val dialogPane: DialogPane = warning.dialogPane
+                        if(isDarkMode){
+                            dialogPane.stylesheets.add("alertStylesheet.css")
+                        }else{
+                            dialogPane.stylesheets.remove("alertStylesheet.css")
+                        }
                         warning.title = "ERROR"
                         warning.contentText = "This file is opened in program"
                         warning.showAndWait()
                     } else {
                         val warningdel = Alert(Alert.AlertType.CONFIRMATION)
+
                         warningdel.title = "DELETE"
-                        warningdel.contentText = "Do you delete this file?"
+                        warningdel.contentText = "Do you want to delete this file?"
+
+                        val dialogPane: DialogPane = warningdel.dialogPane
+                        if(isDarkMode){
+                            dialogPane.stylesheets.add("alertStylesheet.css")
+                        }else{
+                            dialogPane.stylesheets.remove("alertStylesheet.css")
+                        }
                         val result = warningdel.showAndWait()
                         if (result.isPresent) {
                             when (result.get()) {
@@ -197,10 +224,14 @@ class TextWindow(): Application() {
             }
 
             val buttoncontainer = HBox(10.0, open, delete)
-
             val generalcontainer = VBox(notesview, buttoncontainer)
             VBox.setVgrow(notesview, Priority.ALWAYS)
             browser.scene = Scene(generalcontainer)
+            if(isDarkMode){
+                addDarkModeBrowser(browser.scene)
+            }else{
+                removeDarkModeBrowser(browser.scene)
+            }
 
             browser.show()
         }
@@ -209,6 +240,19 @@ class TextWindow(): Application() {
             val warning = Alert(Alert.AlertType.CONFIRMATION)
             warning.title = "SAVE"
             warning.contentText = "Do you want to save this file?"
+
+            val dialogPane: DialogPane = warning.dialogPane
+
+
+            if(isDarkMode){
+                dialogPane.stylesheets.add("alertStylesheet.css")
+//                dialogPane.style = "-fx-background-color: black; -fx-text-background-color: white; -"
+
+            }else{
+                dialogPane.stylesheets.remove("alertStylesheet.css")
+//                dialogPane.style = "-fx-background-color: white; -fx-text-background-color: black;"
+            }
+
             val result = warning.showAndWait()
             if (result.isPresent) {
                 when (result.get()) {
@@ -357,6 +401,7 @@ class TextWindow(): Application() {
 
         val box = VBox(menubar, anchor)
         VBox.setVgrow(anchor, Priority.ALWAYS)
+
 
         stage.scene = Scene(box, 300.0, 300.0)
 
