@@ -199,24 +199,24 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                             val warning = Alert(Alert.AlertType.ERROR)
                             warning.title = "ERROR"
                             warning.contentText = "This file is opened in program"
-                            val dialogPane: DialogPane = warning.dialogPane
-                            if (isDarkMode) {
-                                dialogPane.stylesheets.add("alertStylesheet.css")
-                            } else {
-                                dialogPane.stylesheets.remove("alertStylesheet.css")
-                            }
+                            // val dialogPane: DialogPane = warning.dialogPane
+                            // if (isDarkMode) {
+                            //     dialogPane.stylesheets.add("alertStylesheet.css")
+                            // } else {
+                            //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                            // }
 
                             warning.showAndWait()
                         } else {
                             val warningdel = Alert(Alert.AlertType.CONFIRMATION)
                             warningdel.title = "DELETE"
                             warningdel.contentText = "Do you delete this file?"
-                            val dialogPane: DialogPane = warningdel.dialogPane
-                            if (isDarkMode) {
-                                dialogPane.stylesheets.add("alertStylesheet.css")
-                            } else {
-                                dialogPane.stylesheets.remove("alertStylesheet.css")
-                            }
+                            // val dialogPane: DialogPane = warningdel.dialogPane
+                            // if (isDarkMode) {
+                            //     dialogPane.stylesheets.add("alertStylesheet.css")
+                            // } else {
+                            //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                            // }
 
                             val result = warningdel.showAndWait()
                             if (result.isPresent) {
@@ -253,12 +253,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 warning.title = "ERROR"
                 warning.contentText = "The file browser is opened elsewhere"
 
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 warning.showAndWait()
             }
@@ -278,12 +278,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     val interneterror = Alert(Alert.AlertType.ERROR)
                     interneterror.title = "ERROR: NO INTERNET"
                     interneterror.contentText = "There is no internet to connect server"
-                    val dialogPane: DialogPane = interneterror.dialogPane
-                    if (isDarkMode) {
-                        dialogPane.stylesheets.add("alertStylesheet.css")
-                    } else {
-                        dialogPane.stylesheets.remove("alertStylesheet.css")
-                    }
+                    // val dialogPane: DialogPane = interneterror.dialogPane
+                    // if (isDarkMode) {
+                    //     dialogPane.stylesheets.add("alertStylesheet.css")
+                    // } else {
+                    //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                    // }
                     interneterror.showAndWait()
                     browser.close()
                     lists.setbrowseropened(false)
@@ -328,12 +328,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                         val warningdel = Alert(Alert.AlertType.CONFIRMATION)
                         warningdel.title = "DELETE"
                         warningdel.contentText = "Do you delete this file?"
-                        val dialogPane: DialogPane = warningdel.dialogPane
-                        if (isDarkMode) {
-                            dialogPane.stylesheets.add("alertStylesheet.css")
-                        } else {
-                            dialogPane.stylesheets.remove("alertStylesheet.css")
-                        }
+                        // val dialogPane: DialogPane = warningdel.dialogPane
+                        // if (isDarkMode) {
+                        //     dialogPane.stylesheets.add("alertStylesheet.css")
+                        // } else {
+                        //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                        // }
 
                         val result = warningdel.showAndWait()
                         if (result.isPresent) {
@@ -365,12 +365,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 }
             } else {
                 val warning = Alert(Alert.AlertType.ERROR)
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
                 warning.title = "ERROR"
                 warning.contentText = "The file browser is opened elsewhere"
                 warning.showAndWait()
@@ -382,16 +382,16 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             warning.title = "SAVE"
             warning.contentText = "Do you want to save this file?"
 
-            val dialogPane: DialogPane = warning.dialogPane
-
-            if(isDarkMode){
-                dialogPane.stylesheets.add("alertStylesheet.css")
-               // dialogPane.style = "-fx-background-color: black; -fx-text-background-color: white; -"
-
-            }else{
-                dialogPane.stylesheets.remove("alertStylesheet.css")
-               // dialogPane.style = "-fx-background-color: white; -fx-text-background-color: black;"
-            }
+            // val dialogPane: DialogPane = warning.dialogPane
+            //
+            // if(isDarkMode){
+            //     dialogPane.stylesheets.add("alertStylesheet.css")
+            //    // dialogPane.style = "-fx-background-color: black; -fx-text-background-color: white; -"
+            //
+            // }else{
+            //     dialogPane.stylesheets.remove("alertStylesheet.css")
+            //    // dialogPane.style = "-fx-background-color: white; -fx-text-background-color: black;"
+            // }
 
             val result = warning.showAndWait()
             if (result.isPresent) {
@@ -401,11 +401,11 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                             while(true) {
                                 val renaming = TextInputDialog()
                                 renaming.headerText = "Enter new name"
-                                if (isDarkMode) {
-                                    dialogPane.stylesheets.add("alertStylesheet.css")
-                                } else {
-                                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                                }
+                                // if (isDarkMode) {
+                                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                                // } else {
+                                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                                // }
 
                                 val result = renaming.showAndWait()
                                 if (result.isPresent) {
@@ -413,12 +413,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                                         val warning = Alert(Alert.AlertType.ERROR)
                                         warning.title = "ERROR"
                                         warning.contentText = "Empty can't be filename"
-                                        val dialogPane: DialogPane = warning.dialogPane
-                                        if (isDarkMode) {
-                                            dialogPane.stylesheets.add("alertStylesheet.css")
-                                        } else {
-                                            dialogPane.stylesheets.remove("alertStylesheet.css")
-                                        }
+                                        // val dialogPane: DialogPane = warning.dialogPane
+                                        // if (isDarkMode) {
+                                        //     dialogPane.stylesheets.add("alertStylesheet.css")
+                                        // } else {
+                                        //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                                        // }
 
                                         warning.showAndWait()
                                     } else {
@@ -454,12 +454,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                         val warning = Alert(Alert.AlertType.ERROR)
                         warning.title = "ERROR"
                         warning.contentText = "Empty can't be filename"
-                        val dialogPane: DialogPane = warning.dialogPane
-                        if (isDarkMode) {
-                            dialogPane.stylesheets.add("alertStylesheet.css")
-                        } else {
-                            dialogPane.stylesheets.remove("alertStylesheet.css")
-                        }
+                        // val dialogPane: DialogPane = warning.dialogPane
+                        // if (isDarkMode) {
+                        //     dialogPane.stylesheets.add("alertStylesheet.css")
+                        // } else {
+                        //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                        // }
 
                         warning.showAndWait()
                     } else {
@@ -480,12 +480,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "DELETE"
                 warning.contentText = "Do you delete this file?"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 val result = warning.showAndWait()
                 if (result.isPresent) {
@@ -500,12 +500,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.ERROR)
                 warning.title = "ERROR"
                 warning.contentText = "The file browser is opened elsewhere"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 warning.showAndWait()
             }
@@ -516,12 +516,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "UPDATE"
                 warning.contentText = "Do you want to update the file to server?"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 val result = warning.showAndWait()
                 if (result.isPresent) {
@@ -533,12 +533,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                                     val warning = Alert(Alert.AlertType.ERROR)
                                     warning.title = "ERROR"
                                     warning.contentText = "Please save file locally before you upload."
-                                    val dialogPane: DialogPane = warning.dialogPane
-                                    if (isDarkMode) {
-                                        dialogPane.stylesheets.add("alertStylesheet.css")
-                                    } else {
-                                        dialogPane.stylesheets.remove("alertStylesheet.css")
-                                    }
+                                    // val dialogPane: DialogPane = warning.dialogPane
+                                    // if (isDarkMode) {
+                                    //     dialogPane.stylesheets.add("alertStylesheet.css")
+                                    // } else {
+                                    //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                                    // }
 
                                     warning.showAndWait()
                                 }
@@ -555,12 +555,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.ERROR)
                 warning.title = "ERROR"
                 warning.contentText = "The file browser is opened elsewhere"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 warning.showAndWait()
             }
@@ -571,12 +571,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "FETCH"
                 warning.contentText = "Any unuploaded changes will be lost. Are you sure fetch?"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 val result = warning.showAndWait()
                 if (result.isPresent) {
@@ -599,12 +599,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.ERROR)
                 warning.title = "ERROR"
                 warning.contentText = "The file browser is opened elsewhere"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 warning.showAndWait()
             }
@@ -698,12 +698,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
             } else if (event.code == KeyCode.S && controlPressed) {
                 controlPressed = false
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 warning.title = "SAVE"
                 warning.contentText = "Do you want to save this file?"
@@ -721,12 +721,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                                             val warning = Alert(Alert.AlertType.ERROR)
                                             warning.title = "ERROR"
                                             warning.contentText = "Empty can't be filename"
-                                            val dialogPane: DialogPane = warning.dialogPane
-                                            if (isDarkMode) {
-                                                dialogPane.stylesheets.add("alertStylesheet.css")
-                                            } else {
-                                                dialogPane.stylesheets.remove("alertStylesheet.css")
-                                            }
+                                            // val dialogPane: DialogPane = warning.dialogPane
+                                            // if (isDarkMode) {
+                                            //     dialogPane.stylesheets.add("alertStylesheet.css")
+                                            // } else {
+                                            //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                                            // }
 
                                             warning.showAndWait()
                                         } else {
@@ -756,12 +756,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     val warning = Alert(Alert.AlertType.CONFIRMATION)
                     warning.title = "DELETE"
                     warning.contentText = "Do you delete this file?"
-                    val dialogPane: DialogPane = warning.dialogPane
-                    if (isDarkMode) {
-                        dialogPane.stylesheets.add("alertStylesheet.css")
-                    } else {
-                        dialogPane.stylesheets.remove("alertStylesheet.css")
-                    }
+                    // val dialogPane: DialogPane = warning.dialogPane
+                    // if (isDarkMode) {
+                    //     dialogPane.stylesheets.add("alertStylesheet.css")
+                    // } else {
+                    //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                    // }
 
                     val result = warning.showAndWait()
                     if (result.isPresent) {
@@ -787,12 +787,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     val warning = Alert(Alert.AlertType.ERROR)
                     warning.title = "ERROR"
                     warning.contentText = "The file browser is opened elsewhere"
-                    val dialogPane: DialogPane = warning.dialogPane
-                    if (isDarkMode) {
-                        dialogPane.stylesheets.add("alertStylesheet.css")
-                    } else {
-                        dialogPane.stylesheets.remove("alertStylesheet.css")
-                    }
+                    // val dialogPane: DialogPane = warning.dialogPane
+                    // if (isDarkMode) {
+                    //     dialogPane.stylesheets.add("alertStylesheet.css")
+                    // } else {
+                    //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                    // }
 
                     warning.showAndWait()
                 }
@@ -801,12 +801,12 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val warning = Alert(Alert.AlertType.CONFIRMATION)
                 warning.title = "WARNING"
                 warning.contentText = "The current work will not be saved. Are you sure you want to quit?"
-                val dialogPane: DialogPane = warning.dialogPane
-                if (isDarkMode) {
-                    dialogPane.stylesheets.add("alertStylesheet.css")
-                } else {
-                    dialogPane.stylesheets.remove("alertStylesheet.css")
-                }
+                // val dialogPane: DialogPane = warning.dialogPane
+                // if (isDarkMode) {
+                //     dialogPane.stylesheets.add("alertStylesheet.css")
+                // } else {
+                //     dialogPane.stylesheets.remove("alertStylesheet.css")
+                // }
 
                 val result = warning.showAndWait()
                 if (result.isPresent) {
