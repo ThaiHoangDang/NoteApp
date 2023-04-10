@@ -630,7 +630,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                 val imagePath = selectedImage.toURI().toString()
                 try {
                     val responseIdx = sendImageToMicroservice(selectedImage)
-                    if (responseIdx == -1) { throw ErrorInUploadingFile("There was an error in uploading the file!")}
+                    if (responseIdx < 0) { throw ErrorInUploadingFile("Failed to add image to database. Response Code: ${-responseIdx}.")}
                     val imageHTML = "<img src=${IMAGE_MICROSERVICE}${responseIdx} style=\'width: 100%;\'>"
                     textarea.htmlText += imageHTML
                 } catch (e: IllegalFileTypeUpload) {
@@ -870,11 +870,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
         val res = OkHttpClient().newCall(request).execute()
         var insertionIndex = -1
         if (!res.isSuccessful) {
-            var warning = Alert(Alert.AlertType.ERROR)
-            warning.title = "Image upload failed"
-            warning.contentText = "Failed to add image to database. Response Code: ${res.code}."
-            warning.showAndWait()
-            return -1
+            return -res.code
         }
 
         if (res.body != null) {
