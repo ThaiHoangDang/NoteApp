@@ -99,7 +99,7 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
 
         new.setOnAction {
             val newwindow = Stage()
-            notescene(newwindow, lists, id+1)
+            notescene(newwindow, lists, "-1")
         }
 
 
