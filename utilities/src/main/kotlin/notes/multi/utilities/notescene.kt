@@ -21,6 +21,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.net.NoRouteToHostException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -647,6 +648,11 @@ class notescene(private val stage: Stage, private val lists:GUInote, private val
                     var warning = Alert(Alert.AlertType.ERROR)
                     warning.title = "Error in file upload"
                     warning.contentText = e.message
+                    warning.showAndWait()
+                } catch (e: NoRouteToHostException) {
+                    var warning = Alert(Alert.AlertType.ERROR)
+                    warning.title = "No internet connection"
+                    warning.contentText = "You must have an internet connection to upload image!"
                     warning.showAndWait()
                 }
             }

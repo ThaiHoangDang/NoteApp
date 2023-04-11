@@ -27,20 +27,17 @@ fun main(args: Array<String>) {
         +-------------------------------------------------------------------------------------+
         WELCOME TO TEAM 112'S CONSOLE BASED NOTES APP
          
-        This application is a working console-based prototype for the
-        note taking application that the team will be delivering at the end of the term.
-        
-        With this simple app, users can:
-            1. Create Notes
-            2. Edit Notes
-            3. Delete Notes
-            4. Close GUI Window
+        This is a working console-based interface for the GUI notes application created by
+        Team 112.
             
          To access the app through the command line, simply run ./app <ARG>
          
          The value of <ARG> can be:
-            - help: To view the info of the app and list of all notes 
+            - "help": To view the info of the app and list of all notes 
             - Note ID: ID of the target note that is intended to be opened
+            
+         The list of notes have been displayed as follows:
+         Note ID | Name | Last Updated
        
         +-------------------------------------------------------------------------------------+
     """.trimIndent()
